@@ -1,4 +1,5 @@
 package tn.esprit.spring.kaddem;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,12 +36,12 @@ public class EquipeServiceImplMockTest {
         Equipe equipeJunior = new Equipe("Junior Team", Niveau.JUNIOR);
         Etudiant etudiant = new Etudiant();
         Contrat contratActif = new Contrat();
-        contratActif.setDateFinContrat(new Date(System.currentTimeMillis() - 2 * 365 * 24 * 60 * 60 * 1000L)); // Contrat de 2 ans
+        contratActif.setDateFinContrat(new Date(System.currentTimeMillis() - 2L * 365 * 24 * 60 * 60 * 1000)); // Contrat de 2 ans
         contratActif.setArchive(false);
         etudiant.setContrats(Set.of(contratActif));
         equipeJunior.setEtudiants(Set.of(etudiant));
 
-        when(equipeRepository.findAll()).thenReturn(List.of(equipeJunior));
+        when(equipeRepository.findAll()).thenReturn(Set.of(equipeJunior)); // Changed List to Set
 
         // Call the method under test
         equipeServiceImpl.evoluerEquipes();
@@ -56,12 +57,12 @@ public class EquipeServiceImplMockTest {
         Equipe equipeSenior = new Equipe("Senior Team", Niveau.SENIOR);
         Etudiant etudiant = new Etudiant();
         Contrat contratActif = new Contrat();
-        contratActif.setDateFinContrat(new Date(System.currentTimeMillis() - 3 * 365 * 24 * 60 * 60 * 1000L)); // Contrat de 3 ans
+        contratActif.setDateFinContrat(new Date(System.currentTimeMillis() - 3L * 365 * 24 * 60 * 60 * 1000)); // Contrat de 3 ans
         contratActif.setArchive(false);
         etudiant.setContrats(Set.of(contratActif));
         equipeSenior.setEtudiants(Set.of(etudiant));
 
-        when(equipeRepository.findAll()).thenReturn(List.of(equipeSenior));
+        when(equipeRepository.findAll()).thenReturn(Set.of(equipeSenior)); // Changed List to Set
 
         // Call the method under test
         equipeServiceImpl.evoluerEquipes();
