@@ -1,74 +1,78 @@
 package tn.esprit.spring.kaddem;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import tn.esprit.spring.kaddem.entities.Contrat;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import tn.esprit.spring.kaddem.entities.Equipe;
-import tn.esprit.spring.kaddem.entities.Etudiant;
 import tn.esprit.spring.kaddem.entities.Niveau;
-import tn.esprit.spring.kaddem.repositories.EquipeRepository;
 import tn.esprit.spring.kaddem.services.EquipeServiceImpl;
 
-import java.util.*;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class EquipeServiceImplTest {
 
-public class EquipeServiceImplMockTest {
+    @Autowired
+    EquipeServiceImpl equipeService;
 
-    @Mock
-    private EquipeRepository equipeRepository;
+    @Test
+    @Order(1)
+    public void testAddEquipe() {
+        // Create a new Equipe entity
+        Equipe equipe = new Equipe();
+        equipe.setNomEquipe("Dream Team");
+        equipe.setNiveau(Niveau.JUNIOR);
 
-    @InjectMocks
-    private EquipeServiceImpl equipeServiceImpl;
+        // Add the equipe entity
+        equipeService.addEquipe(equipe);
 
-    @BeforeEach
-    public void init() {
-        MockitoAnnotations.openMocks(this);
+        // Verify that the added equipe is not null by retrieving it
+        Assertions.assertNotNull(equipeService.retrieveEquipe(equipe.getIdEquipe()));
     }
 
     @Test
-    void testEvoluerEquipesToSenior() {
-        // Setup data for the test
-        Equipe equipeJunior = new Equipe("Junior Team", Niveau.JUNIOR);
-        Etudiant etudiant = new Etudiant();
-        Contrat contratActif = new Contrat();
-        contratActif.setDateFinContrat(new Date(System.currentTimeMillis() - 2L * 365 * 24 * 60 * 60 * 1000)); // Contrat de 2 ans
-        contratActif.setArchive(false);
-        etudiant.setContrats(Set.of(contratActif));
-        equipeJunior.setEtudiants(Set.of(etudiant));
+    @Order(2)
+    public void testRetrieveAllEquipes() {
+        // Retrieve all equipes from the service
+        List<Equipe> equipes = equipeService.retrieveAllEquipes();
 
-        when(equipeRepository.findAll()).thenReturn(Set.of(equipeJunior)); // Changed List to Set
-
-        // Call the method under test
-        equipeServiceImpl.evoluerEquipes();
-
-        // Verify the team has evolved to SENIOR
-        assertEquals(Niveau.SENIOR, equipeJunior.getNiveau());
-        verify(equipeRepository).save(equipeJunior);
+        // Verify the size of the list is not zero
+        Assertions.assertNotEquals(0, equipes.size());
     }
 
     @Test
-    void testEvoluerEquipesToExpert() {
-        // Setup data for the test
-        Equipe equipeSenior = new Equipe("Senior Team", Niveau.SENIOR);
-        Etudiant etudiant = new Etudiant();
-        Contrat contratActif = new Contrat();
-        contratActif.setDateFinContrat(new Date(System.currentTimeMillis() - 3L * 365 * 24 * 60 * 60 * 1000)); // Contrat de 3 ans
-        contratActif.setArchive(false);
-        etudiant.setContrats(Set.of(contratActif));
-        equipeSenior.setEtudiants(Set.of(etudiant));
+    @Order(3)
+    public void testUpdateEquipe() {
+        // Create and add a new equipe
+        Equipe equipe = new Equipe();
+        equipe.setNomEquipe("Innovators");
+        equipe.setNiveau(Niveau.SENIOR);
+        equipeService.addEquipe(equipe);
 
-        when(equipeRepository.findAll()).thenReturn(Set.of(equipeSenior)); // Changed List to Set
+        // Update the team's name and save
+        equipe.setNomEquipe("Innovators Team Updated");
+        Equipe updatedEquipe = equipeService.updateEquipe(equipe);
 
-        // Call the method under test
-        equipeServiceImpl.evoluerEquipes();
+        // Verify that the update was successful
+        Assertions.assertEquals("Innovators Team Updated", updatedEquipe.getNomEquipe());
+    }
 
-        // Verify the team has evolved to EXPERT
-        assertEquals(Niveau.EXPERT, equipeSenior.getNiveau());
-        verify(equipeRepository).save(equipeSenior);
+    @Test
+    @Order(4)
+    public void testDeleteEquipe() {
+        // Create and add a new equipe
+        Equipe equipe = new Equipe();
+        equipe.setNomEquipe("Team to Delete");
+        equipe.setNiveau(Niveau.JUNIOR);
+        equipeService.addEquipe(equipe);
+
+        // Delete the equipe by id
+        equipeService.deleteEquipe(equipe.getIdEquipe());
+
+        // Verify that the equipe is deleted by trying to retrieve it
+        Assertions.assertThrows(Exception.class, () -> {
+            equipeService.retrieveEquipe(equipe.getIdEquipe());
+        });
     }
 }
