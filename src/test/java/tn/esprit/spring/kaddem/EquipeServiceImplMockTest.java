@@ -41,7 +41,7 @@ public class EquipeServiceImplMockTest {
         etudiant.setContrats(Set.of(contratActif));
         equipeJunior.setEtudiants(Set.of(etudiant));
 
-        when(equipeRepository.findAll()).thenReturn(Set.of(equipeJunior)); // Changed List to Set
+        when(equipeRepository.findAll()).thenReturn(List.of(equipeJunior));
 
         // Call the method under test
         equipeServiceImpl.evoluerEquipes();
@@ -62,7 +62,7 @@ public class EquipeServiceImplMockTest {
         etudiant.setContrats(Set.of(contratActif));
         equipeSenior.setEtudiants(Set.of(etudiant));
 
-        when(equipeRepository.findAll()).thenReturn(Set.of(equipeSenior)); // Changed List to Set
+        when(equipeRepository.findAll()).thenReturn(List.of(equipeSenior));
 
         // Call the method under test
         equipeServiceImpl.evoluerEquipes();
