@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
-public class TestJunit {
+public class ContratServiceImplJunitTest {
 
     @Autowired
     private ContratRepository contratRepository;
