@@ -22,8 +22,8 @@ COPY target/kaddem-0.0.1-SNAPSHOT.jar /app/kaddem-app.jar
 # RUN : Lancer une commande lors de la construction de l'image
 RUN echo "Building Docker image for the Kaddem project"
 
-# EXPOSE : Exposer le port 8080 pour permettre l'accès à l'application Spring Boot
-EXPOSE 8080
+# EXPOSE : Exposer le port 8089 pour permettre l'accès à l'application Spring Boot
+EXPOSE 8089
 
 # VOLUMES : Créer un point de montage pour persister les données
 VOLUME ["/app/data"]
