@@ -43,6 +43,45 @@ public class ContratServiceImpl implements IContratService{
 		contratRepository.delete(c);
 	}
 
+	/*public Contrat affectContratToEtudiant(Integer idContrat, String nomE, String prenomE) {
+		List<Etudiant> etudiants = etudiantRepository.findByNomEAndPrenomE(nomE, prenomE);
+
+		if (etudiants.isEmpty()) {
+			throw new RuntimeException("No student found with the given name.");
+		} else if (etudiants.size() > 1) {
+			throw new RuntimeException("Multiple students found with the same name. Please refine the search.");
+		}
+
+		Etudiant e = etudiants.get(0);  // Assuming you take the first result
+		Contrat ce = contratRepository.findByIdContrat(idContrat);
+
+		// Rest of the code remains the same
+		ce.setEtudiant(e);
+		contratRepository.save(ce);
+		return ce;
+	}*/
+	/*public Contrat affectContratToEtudiant(Integer idContrat, String nomE, String prenomE) {
+		List<Etudiant> etudiants = etudiantRepository.findByNomEAndPrenomE(nomE, prenomE);
+		if (etudiants.size() > 1) {
+			throw new RuntimeException("Multiple students found with the same name. Please refine the search.");
+		}
+		Etudiant e = etudiants.get(0); // Get the first (and ideally, only) result
+		Contrat ce = contratRepository.findByIdContrat(idContrat);
+		Set<Contrat> contrats = e.getContrats();
+		Integer nbContratsActifs = 0;
+		for (Contrat contrat : contrats) {
+			if (contrat.getArchive() != null && !contrat.getArchive()) {
+				nbContratsActifs++;
+			}
+		}
+		if (nbContratsActifs <= 4) {
+			ce.setEtudiant(e);
+			contratRepository.save(ce);
+		}
+		return ce;
+	}*/
+
+
 
 
 	public Contrat affectContratToEtudiant (Integer idContrat, String nomE, String prenomE){
