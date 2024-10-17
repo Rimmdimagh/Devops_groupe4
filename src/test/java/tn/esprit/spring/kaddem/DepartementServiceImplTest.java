@@ -129,6 +129,10 @@ public class DepartementServiceImplTest {
         // Message final
         System.out.println("Test réussi : " + nombreEtudiants + " étudiants trouvés dans le département.");
     }
+
+
+
+
     @Test
     public void testGetNomDepart() {
         // Arrange : Initialiser un département
