@@ -7,6 +7,15 @@ pipeline {
                 git url: 'https://github.com/Rimmdimagh/5BI3-G4_Kaddem.git', branch: 'RymMdimagh-5BI3-G4'
             }
         }
+        stage('Check Curl Installation') {
+            steps {
+                script {
+                    // Vérifie si curl est disponible
+                    sh 'which curl || echo "curl is not installed"'
+                    sh 'curl --version || echo "Unable to get curl version"'
+                }
+            }
+        }
 
         stage('Check and Start MySQL') {
             steps {
@@ -24,17 +33,24 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
+ stage('Build package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
 
         stage('Tests - JUnit/Mockito') {
             steps {
                 sh 'mvn test'
             }
         }
-         
-    
-
-
+      stage('SonarQube Analysis') {
+            steps {
+                sh 'mvn sonar:sonar -Dsonar.host.url=http://192.168.100.19:9000 -Dsonar.login=admin -Dsonar.password=Theacefamily12@'
+            }
+        }
     }
+
 post {
     success {
         echo 'La pipeline s\'est terminée avec succès. Aucune action requise.'
