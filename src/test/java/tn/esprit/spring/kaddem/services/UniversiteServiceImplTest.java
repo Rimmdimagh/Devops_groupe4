@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.entities.Universite;
+import tn.esprit.spring.kaddem.repositories.DepartementRepository; // Import the DepartementRepository
 import tn.esprit.spring.kaddem.repositories.UniversiteRepository;
 
 import java.util.HashSet;
@@ -22,6 +23,9 @@ class UniversiteServiceImplTest {
     @Mock
     UniversiteRepository universiteRepository;
 
+    @Mock
+    DepartementRepository departementRepository; // Mock for DepartementRepository
+
     @InjectMocks
     UniversiteServiceImpl universiteService;
 
@@ -36,9 +40,9 @@ class UniversiteServiceImplTest {
     @Test
     void retrieveAllUniversites() {
         when(universiteRepository.findAll()).thenReturn(List.of(universite));
-        List<Universite> universites = universiteService.retrieveAllUniversites(); // Explicit type
+        List<Universite> universites = universiteService.retrieveAllUniversites();
         assertNotNull(universites);
-        assertEquals(1, universites.size()); // Fixed cast
+        assertEquals(1, universites.size());
     }
 
     @Test
@@ -67,6 +71,7 @@ class UniversiteServiceImplTest {
 
     @Test
     void deleteUniversite() {
+        when(universiteRepository.findById(1)).thenReturn(Optional.of(universite)); // Mock retrieval
         doNothing().when(universiteRepository).deleteById(1);
         universiteService.deleteUniversite(1);
         verify(universiteRepository, times(1)).deleteById(1);
@@ -79,8 +84,9 @@ class UniversiteServiceImplTest {
 
         when(universiteRepository.findById(1)).thenReturn(Optional.of(universite));
         when(universiteRepository.save(any(Universite.class))).thenReturn(universite);
+        when(departementRepository.findById(1)).thenReturn(Optional.of(departement)); // Mock retrieval for departement
 
-        universiteService.assignUniversiteToDepartement(1, 1); // Fixed method parameters
+        universiteService.assignUniversiteToDepartement(1, 1);
         assertEquals(1, universite.getDepartements().size());
     }
 
