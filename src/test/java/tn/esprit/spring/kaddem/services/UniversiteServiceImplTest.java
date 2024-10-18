@@ -1,0 +1,98 @@
+package tn.esprit.spring.kaddem.services;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import tn.esprit.spring.kaddem.entities.Departement;
+import tn.esprit.spring.kaddem.entities.Universite;
+import tn.esprit.spring.kaddem.repositories.UniversiteRepository;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class UniversiteServiceImplTest {
+
+    @Mock
+    UniversiteRepository universiteRepository;
+
+    @InjectMocks
+    UniversiteServiceImpl universiteService;
+
+    Universite universite;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        universite = new Universite(1, "Université de Test");
+    }
+
+    @Test
+    void retrieveAllUniversites() {
+        when(universiteRepository.findAll()).thenReturn(List.of(universite));
+        List<Universite> universites = universiteService.retrieveAllUniversites(); // Explicit type
+        assertNotNull(universites);
+        assertEquals(1, universites.size()); // Fixed cast
+    }
+
+    @Test
+    void addUniversite() {
+        when(universiteRepository.save(any(Universite.class))).thenReturn(universite);
+        Universite newUniv = universiteService.addUniversite(universite);
+        assertNotNull(newUniv);
+        assertEquals("Université de Test", newUniv.getNomUniv());
+    }
+
+    @Test
+    void updateUniversite() {
+        when(universiteRepository.save(any(Universite.class))).thenReturn(universite);
+        Universite updatedUniv = universiteService.updateUniversite(universite);
+        assertNotNull(updatedUniv);
+        assertEquals("Université de Test", updatedUniv.getNomUniv());
+    }
+
+    @Test
+    void retrieveUniversite() {
+        when(universiteRepository.findById(1)).thenReturn(Optional.of(universite));
+        Universite foundUniv = universiteService.retrieveUniversite(1);
+        assertNotNull(foundUniv);
+        assertEquals("Université de Test", foundUniv.getNomUniv());
+    }
+
+    @Test
+    void deleteUniversite() {
+        doNothing().when(universiteRepository).deleteById(1);
+        universiteService.deleteUniversite(1);
+        verify(universiteRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    void assignUniversiteToDepartement() {
+        Departement departement = new Departement();
+        universite.setDepartements(new HashSet<>(Set.of(departement)));
+
+        when(universiteRepository.findById(1)).thenReturn(Optional.of(universite));
+        when(universiteRepository.save(any(Universite.class))).thenReturn(universite);
+
+        universiteService.assignUniversiteToDepartement(1, 1); // Fixed method parameters
+        assertEquals(1, universite.getDepartements().size());
+    }
+
+    @Test
+    void retrieveDepartementsByUniversite() {
+        Departement departement1 = new Departement();
+        Departement departement2 = new Departement();
+        Set<Departement> departements = new HashSet<>(Set.of(departement1, departement2));
+        universite.setDepartements(departements);
+
+        when(universiteRepository.findById(1)).thenReturn(Optional.of(universite));
+        Set<Departement> foundDepartements = universiteService.retrieveDepartementsByUniversite(1);
+        assertEquals(2, foundDepartements.size());
+    }
+}
