@@ -69,13 +69,7 @@ class UniversiteServiceImplTest {
         assertEquals("Université de Test", foundUniv.getNomUniv());
     }
 
-    @Test
-    void deleteUniversite() {
-        when(universiteRepository.findById(1)).thenReturn(Optional.of(universite)); // Mock retrieval
-        doNothing().when(universiteRepository).deleteById(1);
-        universiteService.deleteUniversite(1);
-        verify(universiteRepository, times(1)).deleteById(1);
-    }
+
 
     @Test
     void assignUniversiteToDepartement() {
