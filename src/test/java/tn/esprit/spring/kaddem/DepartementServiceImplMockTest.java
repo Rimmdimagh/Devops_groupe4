@@ -1,10 +1,9 @@
 package tn.esprit.spring.kaddem;
 
-import org.springframework.boot.test.context.SpringBootTest;
+
 import tn.esprit.spring.kaddem.entities.Departement;
 
 import tn.esprit.spring.kaddem.entities.Etudiant;
-import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
 import tn.esprit.spring.kaddem.services.DepartementServiceImpl;
