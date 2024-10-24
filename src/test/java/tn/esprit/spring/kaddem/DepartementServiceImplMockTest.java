@@ -35,7 +35,7 @@ public class DepartementServiceImplMockTest {
     void testRetrieveAllDepartements() {
         // Préparation des données de test
         Departement departement1 = new Departement("Marketing");
-        Departement departement2 = new Departement("électronique");
+        Departement departement2 = new Departement("electronique");
         List<Departement> expectedDepartements = Arrays.asList(departement1, departement2);
 
         // Simulation du comportement du repository avec Mockito
@@ -172,6 +172,48 @@ public class DepartementServiceImplMockTest {
             System.out.println("Le nombre d'étudiants dans le département " + departement.getNomDepart() + " est : " + nombreEtudiants);
         }
     }
+
+    @Test
+    public void testIsEtudiantInDepartement() {
+        Integer etudiantId1 = 1;
+        Integer etudiantId2 = 2; // Étudiant dans un autre département
+        Integer etudiantIdNotFound = 3; // Étudiant non trouvé
+        Integer departementId = 1; // ID du département
+
+        // Cree un département
+        Departement departement = new Departement(departementId, "Marketing");
+
+        // cree un étudiant  qui appartient au département
+        Etudiant etudiant1 = new Etudiant("Rim", "Mdimagh");
+        etudiant1.setDepartement(departement); // L'étudiant appartient au département
+
+        // Créer un étudiant n'appartient pas au depart
+        Etudiant etudiant2 = new Etudiant("Amel", "Khelil");
+        etudiant2.setDepartement(new Departement(2, "Design")); // L'étudiant appartient à un autre département
+
+        // Simulation du comportement du repository
+        when(etudiantRepository.findById(etudiantId1)).thenReturn(Optional.of(etudiant1));
+        when(etudiantRepository.findById(etudiantId2)).thenReturn(Optional.of(etudiant2));
+        when(etudiantRepository.findById(etudiantIdNotFound)).thenReturn(Optional.empty());
+
+        // Test du premier cas etudiant  dans le département
+        boolean result1 = departementService.isEtudiantInDepartement(etudiantId1, departementId);
+        System.out.println("Test 1 - Étudiant ID " + etudiantId1 + ": " + result1);
+        assertTrue(result1, "L'étudiant doit être dans le département");
+
+        // Test du deuxième cas etudiant dans un autre département
+        boolean result2 = departementService.isEtudiantInDepartement(etudiantId2, departementId);
+        System.out.println("Test 2 - Étudiant ID " + etudiantId2 + ": " + result2);
+        assertFalse(result2, "L'étudiant ne doit pas être dans le département");
+
+        // Test du troisième cas Étudiant non trouvé
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            departementService.isEtudiantInDepartement(etudiantIdNotFound, departementId);
+        });
+        System.out.println("Test 3 - Étudiant ID " + etudiantIdNotFound + ": Exception attendue");
+        assertEquals("L'étudiant n'existe pas", exception.getMessage());
+    }
+
 
 
 }

@@ -17,4 +17,5 @@ public interface IDepartementService {
     public void removeEtudiantFromDepartement(Integer etudiantId);
     public void affectDepartementToEtudiants(Integer departementId, List<Integer> etudiantIds);
     public Integer countEtudiantsInDepartement(Integer departementId);
+    public boolean isEtudiantInDepartement(Integer etudiantId, Integer departementId);
 }

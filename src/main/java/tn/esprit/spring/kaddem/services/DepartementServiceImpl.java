@@ -116,6 +116,14 @@ public class DepartementServiceImpl implements IDepartementService {
     }
 
 
+    // Vérifier si un étudiant est dans un département
+    public boolean isEtudiantInDepartement(Integer etudiantId, Integer departementId) {
+        Etudiant etudiant = etudiantRepository.findById(etudiantId)
+                .orElseThrow(() -> new RuntimeException("L'étudiant n'existe pas"));
+
+        return etudiant.getDepartement() != null && etudiant.getDepartement().getIdDepart().equals(departementId);
+    }
+
 
 
 

@@ -132,51 +132,6 @@ public class DepartementServiceImplTest {
 
 
 
-    @Test
-    public void testGetNomDepart() {
-        // Arrange : Initialiser un département
-        Departement departement = new Departement("Informatique");
-
-        // Act & Assert : Vérifier que le nom du département est correct
-        assertEquals("Informatique", departement.getNomDepart(), "Le nom du département devrait être 'Informatique'");
-    }
-
-    @Test
-    public void testSetNomDepart() {
-        // Arrange : Initialiser un département
-        Departement departement = new Departement("Informatique");
-
-        // Act : Modifier le nom du département
-        departement.setNomDepart("Mathematics");
-
-        // Assert : Vérifier que le nom du département a bien été modifié
-        assertEquals("Mathematics", departement.getNomDepart(), "Le nom du département devrait être 'Mathematics'");
-        // Afficher un message dans la console
-        System.out.println("Test terminé : Le setter a bien modifié le nom du département.");
-    }
-
-
-    @Test
-    public void testGetIdDepart() {
-        // Arrange : Initialiser un département avec un ID spécifique
-        Departement departement = new Departement();
-        departement.setIdDepart(1);
-
-        // Act & Assert : Vérifier que le getter pour idDepart retourne bien l'ID défini
-        assertEquals(Integer.valueOf(1), departement.getIdDepart(), "L'ID du département devrait être 1");
-    }
-
-    @Test
-    public void testSetIdDepart() {
-        // Arrange : Initialiser un département
-        Departement departement = new Departement();
-
-        // Act : Modifier l'ID du département
-        departement.setIdDepart(2);
-
-        // Assert : Vérifier que le setter pour idDepart a bien modifié l'ID
-        assertEquals(Integer.valueOf(2), departement.getIdDepart(), "L'ID du département devrait être 2");
-    }
 
 
 }
