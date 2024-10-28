@@ -17,4 +17,6 @@ public interface EtudiantRepository extends CrudRepository<Etudiant,Integer> {
 
     @Query("SELECT COUNT(e) FROM Etudiant e WHERE e.departement.idDepart = :departementId")
     long countEtudiantsByDepartement_IdDepart(Integer departementId);
+
+
 }

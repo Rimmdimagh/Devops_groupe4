@@ -70,57 +70,6 @@ return  etudiantRepository.findEtudiantsByDepartement_IdDepart((idDepartement));
 	}
 
 
-	//les nouveux méthodes ajouter
-
-
-	public void assignEtudiantsToEquipe(List<Integer> etudiantIds, Integer equipeId) {
-		Equipe equipe = equipeRepository.findById(equipeId).orElse(null);
-		for (Integer etudiantId : etudiantIds) {
-			Etudiant etudiant = etudiantRepository.findById(etudiantId).orElse(null);
-			if (etudiant != null) {
-				equipe.getEtudiants().add(etudiant);
-			}
-		}
-		equipeRepository.save(equipe);
-	}
-
-	public List<Etudiant> findEtudiantsByDepartement(Integer departementId) {
-		// Vérifier si l'ID du département est valide
-		if (departementId <= 0) {
-			System.out.println("Aucun département trouvé pour l'ID : " + departementId);
-			return Collections.emptyList(); // Retourner une liste vide
-		}
-
-		List<Etudiant> etudiants = etudiantRepository.findEtudiantsByDepartement_IdDepart(departementId);
-
-		// Affichage du nombre d'étudiants trouvés
-		if (etudiants.isEmpty()) {
-			System.out.println("Aucun étudiant trouvé pour le département ID : " + departementId);
-		} else {
-			System.out.println("Il y a " + etudiants.size() + " étudiant(s) dans le département ID : " + departementId + ".");
-		}
-
-		return etudiants;
-	}
-
-	public long countEtudiantsInDepartement(Integer departementId) {
-		// Vérifier si l'ID du département est valide
-		if (departementId <= 0) {
-			System.out.println("Aucun département trouvé pour l'ID : " + departementId);
-			return 0; // Retourner 0 si l'ID est invalide
-		}
-
-		long count = etudiantRepository.countEtudiantsByDepartement_IdDepart(departementId);
-
-		// Affichage du nombre d'étudiants trouvés
-		if (count == 0) {
-			System.out.println("Aucun étudiant trouvé pour le département ID : " + departementId);
-		} else {
-			System.out.println("Il y a " + count + " étudiant(s) dans le département ID : " + departementId + ".");
-		}
-
-		return count;
-	}
 
 
 

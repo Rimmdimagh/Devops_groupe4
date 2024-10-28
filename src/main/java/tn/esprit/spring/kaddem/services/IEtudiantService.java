@@ -21,7 +21,5 @@ public interface IEtudiantService {
 
     public 	List<Etudiant> getEtudiantsByDepartement (Integer idDepartement);
 
-    public void assignEtudiantsToEquipe(List<Integer> etudiantIds, Integer equipeId);
-    public List<Etudiant> findEtudiantsByDepartement(Integer departementId);
-    public long countEtudiantsInDepartement(Integer departementId);
+
 }
