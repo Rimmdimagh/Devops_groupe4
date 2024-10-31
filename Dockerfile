@@ -10,8 +10,8 @@ ENV APP_NAME="Kaddem" \
 # WORKDIR : Définir le dossier de travail pour toutes les autres commandes
 WORKDIR /app
 # COPY : Copier le fichier JAR généré par ton projet dans le conteneur
-COPY target/kaddem-0.0.1-SNAPSHOT.jar /app/kaddem-app.jar
-COPY target/kaddem-0.0.1-SNAPSHOT.jar /app/kadden-app.jar
+COPY target/kaddem-0.0.1.jar /app/kaddem-app.jar
+
 
 
 # RUN : Lancer une commande lors de la construction de l'image
