@@ -145,10 +145,7 @@
             <name>Nexus Repository</name>
             <url>http://192.168.100.19:8081/repository/maven-releases/</url>
         </repository>
-        <snapshotRepository>
-            <id>snapshot-repo</id>
-            <url>http://192.168.100.19:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
+        
     </distributionManagement>
 
 </project>
