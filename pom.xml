@@ -10,7 +10,7 @@
     </parent>
     <groupId>tn.esprit</groupId> <!-- Updated groupId -->
     <artifactId>kaddem</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>kaddem</name>
     <description>kaddem</description>
     <properties>
@@ -113,9 +113,13 @@
 
     <distributionManagement>
         <repository>
-            <id>deploymentRepo</id>
-            <name>Nexus Repository</name>
+            <id>releases</id>
             <url>http://192.168.50.4:8081/repository/maven-releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://192.168.50.4:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
+
 </project>
