@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.entities.Universite;
-import tn.esprit.spring.kaddem.repositories.DepartementRepository; // Import the DepartementRepository
+import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.UniversiteRepository;
 
 import java.util.HashSet;
@@ -24,7 +24,7 @@ class UniversiteServiceImplTest {
     UniversiteRepository universiteRepository;
 
     @Mock
-    DepartementRepository departementRepository; // Mock for DepartementRepository
+    DepartementRepository departementRepository;
 
     @InjectMocks
     UniversiteServiceImpl universiteService;
@@ -69,8 +69,6 @@ class UniversiteServiceImplTest {
         assertEquals("Université de Test", foundUniv.getNomUniv());
     }
 
-
-
     @Test
     void assignUniversiteToDepartement() {
         Departement departement = new Departement();
@@ -78,7 +76,7 @@ class UniversiteServiceImplTest {
 
         when(universiteRepository.findById(1)).thenReturn(Optional.of(universite));
         when(universiteRepository.save(any(Universite.class))).thenReturn(universite);
-        when(departementRepository.findById(1)).thenReturn(Optional.of(departement)); // Mock retrieval for departement
+        when(departementRepository.findById(1)).thenReturn(Optional.of(departement));
 
         universiteService.assignUniversiteToDepartement(1, 1);
         assertEquals(1, universite.getDepartements().size());
