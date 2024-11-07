@@ -22,6 +22,8 @@ public class DepartementServiceImpl implements IDepartementService {
 
     DepartementRepository departementRepository;
     EtudiantRepository etudiantRepository;
+
+
     @Autowired
     public DepartementServiceImpl(DepartementRepository departementRepository, EtudiantRepository etudiantRepository) {
         this.departementRepository = departementRepository;
