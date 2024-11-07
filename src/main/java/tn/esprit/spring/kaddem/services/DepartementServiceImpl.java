@@ -93,11 +93,11 @@ public class DepartementServiceImpl implements IDepartementService {
 
 
 
-
+   
     public Integer countEtudiantsInDepartement(Integer departementId) {
         // Vérifier si l'ID du département est valide (non nul et supérieur à zéro)
         if (departementId == null || departementId <= 0) {
-            throw new DepartementNotFoundException("Aucun département trouvé");
+            throw new RuntimeException("Aucun département trouvé");
         }
 
         // Récupérer le département en fonction de l'ID fourni
@@ -105,7 +105,7 @@ public class DepartementServiceImpl implements IDepartementService {
 
         // Vérifier si le département existe
         if (departement == null) {
-            throw new DepartementNotFoundException("Département avec l'ID " + departementId + " non trouvé");
+            throw new RuntimeException("Département non trouvé");
         }
 
         // Compter le nombre d'étudiants associés au département
