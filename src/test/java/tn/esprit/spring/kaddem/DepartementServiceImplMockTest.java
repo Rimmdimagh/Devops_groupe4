@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DepartementServiceImplMockTest {
+ class DepartementServiceImplMockTest {
 
     @Mock
     private DepartementRepository departementRepository;
@@ -105,7 +105,7 @@ public class DepartementServiceImplMockTest {
 
     // Test de la dissociation d'un étudiant de son département
     @Test
-    public void testRemoveEtudiantFromDepartement() {
+     void testRemoveEtudiantFromDepartement() {
         // Préparation des données de test
         Integer etudiantId = 100;
 
@@ -174,7 +174,7 @@ public class DepartementServiceImplMockTest {
     }
 
     @Test
-    public void testIsEtudiantInDepartement() {
+     void testIsEtudiantInDepartement() {
         Integer etudiantId1 = 1;
         Integer etudiantId2 = 2; // Étudiant dans un autre département
         Integer etudiantIdNotFound = 3; // Étudiant non trouvé
