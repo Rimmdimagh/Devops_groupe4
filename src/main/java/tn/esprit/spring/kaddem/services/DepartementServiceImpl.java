@@ -54,7 +54,7 @@ public class DepartementServiceImpl implements IDepartementService {
         if (departementId == 0) {
             throw new RuntimeException("Département non trouvé");
         }
-       // Chercher le département dans la base de données en utilisant l id  du département
+        // Chercher le département dans la base de données en utilisant l id  du département
         Departement departement = departementRepository.findById(departementId)
                 .orElseThrow(() -> new RuntimeException("Département non trouvé"));
 
