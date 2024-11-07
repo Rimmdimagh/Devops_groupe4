@@ -6,6 +6,7 @@ import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.entities.Etudiant;
 import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
+import tn.esprit.spring.kaddem.services.DepartementNotFoundException;
 import tn.esprit.spring.kaddem.services.DepartementServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -123,6 +124,19 @@ import static org.mockito.Mockito.*;
 
             System.out.println("Les étudiants ont été correctement affectés au département : " + departementInformatique.getNomDepart());
         }
+    }
+    
+    @Test
+    void testAffectDepartementToEtudiants_InvalidDepartementId() {
+        Integer invalidDepartementId = 0; // Invalid ID
+        List<Integer> etudiantIds = Arrays.asList(1, 2, 3);
+
+        Exception exception = assertThrows(DepartementNotFoundException.class, () -> {
+            departementService.affectDepartementToEtudiants(invalidDepartementId, etudiantIds);
+        });
+
+        assertEquals("Département non trouvé", exception.getMessage());
+        System.out.println("Test passed: Invalid department ID threw exception - " + exception.getMessage());
     }
 
 
