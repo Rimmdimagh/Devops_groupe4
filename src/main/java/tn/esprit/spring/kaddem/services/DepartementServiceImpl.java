@@ -20,12 +20,13 @@ public class DepartementServiceImpl implements IDepartementService {
     // Constant for error messages
     private static final String DEPARTEMENT_NOT_FOUND_MSG = "Département non trouvé";
 
-    @Autowired
     DepartementRepository departementRepository;
-
-    @Autowired
     EtudiantRepository etudiantRepository;
-
+    @Autowired
+    public DepartementServiceImpl(DepartementRepository departementRepository, EtudiantRepository etudiantRepository) {
+        this.departementRepository = departementRepository;
+        this.etudiantRepository = etudiantRepository;
+    }
     // Récupérer tous les départements
     public List<Departement> retrieveAllDepartements() {
         return (List<Departement>) departementRepository.findAll();
