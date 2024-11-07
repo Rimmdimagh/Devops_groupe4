@@ -16,16 +16,11 @@ import java.util.*;
 @Service
 public class DepartementServiceImpl implements IDepartementService {
 
-
-    DepartementRepository departementRepository;
-    EtudiantRepository etudiantRepository;
-
-    // Injection par constructeur
     @Autowired
-    public DepartementServiceImpl(DepartementRepository departementRepository, EtudiantRepository etudiantRepository) {
-        this.departementRepository = departementRepository;
-        this.etudiantRepository = etudiantRepository;
-    }
+    DepartementRepository departementRepository;
+
+    @Autowired
+    EtudiantRepository etudiantRepository;
 
     // Récupérer tous les départements
     public List<Departement> retrieveAllDepartements() {
@@ -42,10 +37,11 @@ public class DepartementServiceImpl implements IDepartementService {
         return departementRepository.save(d);
     }
 
+    // Récupérer un département par son ID
     public Departement retrieveDepartement(Integer idDepart) {
-        return departementRepository.findById(idDepart)
-                .orElseThrow(() -> new NoSuchElementException("Département avec l'ID " + idDepart + " non trouvé"));
+        return departementRepository.findById(idDepart).get();
     }
+
     // Supprimer un département
     public void deleteDepartement(Integer idDepartement) {
         Departement d = retrieveDepartement(idDepartement);
@@ -93,7 +89,7 @@ public class DepartementServiceImpl implements IDepartementService {
 
 
 
-   
+
     public Integer countEtudiantsInDepartement(Integer departementId) {
         // Vérifier si l'ID du département est valide (non nul et supérieur à zéro)
         if (departementId == null || departementId <= 0) {
