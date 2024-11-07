@@ -28,6 +28,82 @@ public class DepartementServiceImplMockTest {
 
     private DepartementServiceImpl departementService;
 
+
+    @Test
+    void testAddDepartement() {
+        // Arrange
+        Departement departement = new Departement(null, "Physics");
+        when(departementRepository.save(departement)).thenReturn(new Departement(1, "Physics"));
+
+        // Act
+        Departement result = departementService.addDepartement(departement);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getIdDepart());
+        assertEquals("Physics", result.getNomDepart());
+        verify(departementRepository, times(1)).save(departement);
+    }
+
+
+
+    @Test
+    void testUpdateDepartement() {
+        // Arrange
+        Departement departement = new Departement(1, "Mathematics");
+        when(departementRepository.save(departement)).thenReturn(departement);
+
+        // Act
+        Departement result = departementService.updateDepartement(departement);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Mathematics", result.getNomDepart());
+        verify(departementRepository, times(1)).save(departement);
+    }
+
+
+
+    @Test
+    void testRetrieveDepartement() {
+        // Arrange
+        Integer departementId = 1;
+        Departement departement = new Departement(departementId, "Computer Science");
+        when(departementRepository.findById(departementId)).thenReturn(Optional.of(departement));
+
+        // Act
+        Departement result = departementService.retrieveDepartement(departementId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Computer Science", result.getNomDepart());
+        verify(departementRepository, times(1)).findById(departementId);
+    }
+
+
+
+    @Test
+    void testDeleteDepartement() {
+        // Arrange
+        Integer departementId = 1;
+        Departement departement = new Departement(departementId, "Physics");
+        when(departementRepository.findById(departementId)).thenReturn(Optional.of(departement));
+
+        // Act
+        departementService.deleteDepartement(departementId);
+
+        // Assert
+        verify(departementRepository, times(1)).delete(departement);
+    }
+
+
+
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
     @Test
     void testRetrieveAllDepartements() {
 
