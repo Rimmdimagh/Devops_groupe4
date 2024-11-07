@@ -34,13 +34,14 @@ class DepartementServiceImplTest {
 
     @Autowired
     private EtudiantRepository etudiantRepository;
-    private Departement newDepartement;
+
+    private Departement departement;
 
     @Test
     @Transactional
     void testAffectDepartementToEtudiants() {
         // Arrange : Initialiser le département et les étudiants
-        Departement newDepartement = new Departement("Marketing");
+        Departement departement = new Departement("Marketing");
 
         Etudiant etudiant1 = new Etudiant("Rim", "Mdimagh");
         Etudiant etudiant2 = new Etudiant("Amel", "Khelil");
@@ -50,12 +51,12 @@ class DepartementServiceImplTest {
         etudiants.add(etudiant2);
 
         // Sauvegarder le département et les étudiants
-        newDepartement.setEtudiants(etudiants);
-        departementRepository.save(newDepartement);
+        departement.setEtudiants(etudiants);
+        departementRepository.save(departement);
         etudiantRepository.saveAll(etudiants);
 
         // Act : Vérifier que le département contient bien le nombre d'étudiants affectés
-        Departement savedDepartement = departementService.retrieveDepartement(newDepartement.getIdDepart());
+        Departement savedDepartement = departementService.retrieveDepartement(departement.getIdDepart());
 
         // Assert : Vérifier que le département contient bien le nombre d'étudiants
         assertEquals(etudiants.size(), savedDepartement.getEtudiants().size(),
@@ -72,11 +73,11 @@ class DepartementServiceImplTest {
     @Transactional
     void testRemoveEtudiantFromDepartement() {
         // Arrange : Créer un département et un étudiant
-        Departement newDepartement = new Departement("Informatique");
-        departementRepository.save(newDepartement);  // Sauvegarder le département
+        Departement departement = new Departement("Informatique");
+        departementRepository.save(departement);  // Sauvegarder le département
 
         Etudiant etudiant = new Etudiant("Rim", "Mdimagh");
-        etudiant.setDepartement(newDepartement);
+        etudiant.setDepartement(departement);
         etudiantRepository.save(etudiant);  // Sauvegarder l'étudiant
 
         // Assurer que l'étudiant est bien affecté à un département
@@ -94,7 +95,7 @@ class DepartementServiceImplTest {
 
         // Nettoyage
         etudiantRepository.delete(updatedEtudiant);
-        departementRepository.delete(newDepartement);
+        departementRepository.delete(departement);
 
         // Message final
         System.out.println("Test terminé : L'étudiant a bien été retiré du département.");
@@ -104,7 +105,7 @@ class DepartementServiceImplTest {
     @Transactional
     void testCountEtudiantsInDepartement() {
         // Arrange : Créer un département avec des étudiants
-        Departement newDepartement = new Departement("Informatique");
+        Departement departement = new Departement("Informatique");
 
         Etudiant etudiant1 = new Etudiant("Ahmed", "Ahmed");
         Etudiant etudiant2 = new Etudiant("Ryhem", "Mdimagh");
@@ -113,8 +114,8 @@ class DepartementServiceImplTest {
         etudiants.add(etudiant1);
         etudiants.add(etudiant2);
 
-        newDepartement.setEtudiants(etudiants);
-        Departement savedDepartement = departementService.addDepartement(newDepartement);
+        departement.setEtudiants(etudiants);
+        Departement savedDepartement = departementService.addDepartement(departement);
 
         // Act : Compter les étudiants dans le département
         Integer nombreEtudiants = departementService.countEtudiantsInDepartement(savedDepartement.getIdDepart());
