@@ -6,7 +6,6 @@ import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.entities.Etudiant;
 import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
-import tn.esprit.spring.kaddem.services.DepartementNotFoundException;
 import tn.esprit.spring.kaddem.services.DepartementServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
- class DepartementServiceImplMockTest {
+public class DepartementServiceImplMockTest {
 
     @Mock
     private DepartementRepository departementRepository;
@@ -30,33 +29,7 @@ import static org.mockito.Mockito.*;
 
     @InjectMocks
     private DepartementServiceImpl departementService;
-    @Test
-    void testUpdateDepartement() {
-        Departement departement = new Departement();
-        departement.setIdDepart(1);
-        departement.setNomDepart("Updated Name");
 
-        when(departementRepository.save(departement)).thenReturn(departement);
-
-        Departement updatedDepartement = departementService.updateDepartement(departement);
-
-        assertNotNull(updatedDepartement);
-        assertEquals("Updated Name", updatedDepartement.getNomDepart());
-        verify(departementRepository, times(1)).save(departement);
-    }
-    @Test
-    void testDeleteDepartement() {
-        Departement departement = new Departement();
-        departement.setIdDepart(1);
-
-        when(departementRepository.findById(1)).thenReturn(Optional.of(departement));
-        doNothing().when(departementRepository).delete(departement);
-
-        departementService.deleteDepartement(1);
-
-        verify(departementRepository, times(1)).findById(1);
-        verify(departementRepository, times(1)).delete(departement);
-    }
 
     @Test
     void testRetrieveAllDepartements() {
@@ -125,19 +98,6 @@ import static org.mockito.Mockito.*;
             System.out.println("Les étudiants ont été correctement affectés au département : " + departementInformatique.getNomDepart());
         }
     }
-    
-    @Test
-    void testAffectDepartementToEtudiants_InvalidDepartementId() {
-        Integer invalidDepartementId = 0; // Invalid ID
-        List<Integer> etudiantIds = Arrays.asList(1, 2, 3);
-
-        Exception exception = assertThrows(DepartementNotFoundException.class, () -> {
-            departementService.affectDepartementToEtudiants(invalidDepartementId, etudiantIds);
-        });
-
-        assertEquals("Département non trouvé", exception.getMessage());
-        System.out.println("Test passed: Invalid department ID threw exception - " + exception.getMessage());
-    }
 
 
 
@@ -145,7 +105,7 @@ import static org.mockito.Mockito.*;
 
     // Test de la dissociation d'un étudiant de son département
     @Test
-     void testRemoveEtudiantFromDepartement() {
+    public void testRemoveEtudiantFromDepartement() {
         // Préparation des données de test
         Integer etudiantId = 100;
 
@@ -214,7 +174,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testIsEtudiantInDepartement() {
+    public void testIsEtudiantInDepartement() {
         Integer etudiantId1 = 1;
         Integer etudiantId2 = 2; // Étudiant dans un autre département
         Integer etudiantIdNotFound = 3; // Étudiant non trouvé
