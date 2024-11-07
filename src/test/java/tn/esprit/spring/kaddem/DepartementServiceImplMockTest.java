@@ -29,7 +29,20 @@ import static org.mockito.Mockito.*;
 
     @InjectMocks
     private DepartementServiceImpl departementService;
+    @Test
+    void testUpdateDepartement() {
+        Departement departement = new Departement();
+        departement.setIdDepart(1);
+        departement.setNomDepart("Updated Name");
 
+        when(departementRepository.save(departement)).thenReturn(departement);
+
+        Departement updatedDepartement = departementService.updateDepartement(departement);
+
+        assertNotNull(updatedDepartement);
+        assertEquals("Updated Name", updatedDepartement.getNomDepart());
+        verify(departementRepository, times(1)).save(departement);
+    }
 
     @Test
     void testRetrieveAllDepartements() {
