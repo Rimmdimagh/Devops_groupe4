@@ -4,6 +4,7 @@ import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.entities.Etudiant;
 import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
+import tn.esprit.spring.kaddem.services.DepartementNotFoundException;
 import tn.esprit.spring.kaddem.services.DepartementServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,6 +81,21 @@ public class DepartementServiceImplMockTest {
         verify(departementRepository, times(1)).findById(departementId);
     }
 
+    @Test
+    void testRetrieveDepartementNotFound() {
+        // Arrange
+        Integer invalidId = 999; // ID that does not exist in the repository
+        when(departementRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        Exception exception = assertThrows(DepartementNotFoundException.class, () -> {
+            departementService.retrieveDepartement(invalidId);
+        });
+
+        // Verify the exception message
+        assertEquals("Département non trouvé", exception.getMessage());
+        verify(departementRepository, times(1)).findById(invalidId);
+    }
 
 
     @Test
