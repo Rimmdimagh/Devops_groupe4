@@ -43,6 +43,19 @@ import static org.mockito.Mockito.*;
         assertEquals("Updated Name", updatedDepartement.getNomDepart());
         verify(departementRepository, times(1)).save(departement);
     }
+    @Test
+    void testDeleteDepartement() {
+        Departement departement = new Departement();
+        departement.setIdDepart(1);
+
+        when(departementRepository.findById(1)).thenReturn(Optional.of(departement));
+        doNothing().when(departementRepository).delete(departement);
+
+        departementService.deleteDepartement(1);
+
+        verify(departementRepository, times(1)).findById(1);
+        verify(departementRepository, times(1)).delete(departement);
+    }
 
     @Test
     void testRetrieveAllDepartements() {
