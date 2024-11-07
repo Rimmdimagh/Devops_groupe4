@@ -2,7 +2,6 @@ package tn.esprit.spring.kaddem.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.entities.Etudiant;
@@ -10,11 +9,16 @@ import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 public class DepartementServiceImpl implements IDepartementService {
+
+    // Constant for error messages
+    private static final String DEPARTEMENT_NOT_FOUND_MSG = "Département non trouvé";
 
     @Autowired
     DepartementRepository departementRepository;
@@ -39,7 +43,8 @@ public class DepartementServiceImpl implements IDepartementService {
 
     // Récupérer un département par son ID
     public Departement retrieveDepartement(Integer idDepart) {
-        return departementRepository.findById(idDepart).get();
+        return departementRepository.findById(idDepart).orElseThrow(() ->
+                new DepartementNotFoundException(DEPARTEMENT_NOT_FOUND_MSG));
     }
 
     // Supprimer un département
@@ -48,85 +53,60 @@ public class DepartementServiceImpl implements IDepartementService {
         departementRepository.delete(d);
     }
 
-
-    //les nouveux methodes ajouter par Rim
+    // Ajouter un département aux étudiants
     public void affectDepartementToEtudiants(Integer departementId, List<Integer> etudiantIds) {
         if (departementId == 0) {
-            throw new RuntimeException("Département non trouvé");
+            throw new DepartementNotFoundException(DEPARTEMENT_NOT_FOUND_MSG);
         }
-        // Chercher le département dans la base de données en utilisant l id  du département
-        Departement departement = departementRepository.findById(departementId)
-                .orElseThrow(() -> new RuntimeException("Département non trouvé"));
 
-        // Créer un ensemble vide pour stocker les étudiants qui seront liés au département
+        // Chercher le département
+        Departement departement = departementRepository.findById(departementId)
+                .orElseThrow(() -> new DepartementNotFoundException(DEPARTEMENT_NOT_FOUND_MSG));
+
         Set<Etudiant> etudiantsSet = new HashSet<>();
-        // Parcourir la liste des IDs d'étudiants pour les récupérer un par un
         for (Integer etudiantId : etudiantIds) {
-            // 4. Chercher chaque étudiant dans la base de données en utilisant son ID
             Etudiant etudiant = etudiantRepository.findById(etudiantId)
-                    .orElseThrow(() -> new RuntimeException("Étudiant non trouvé"));
-            // assigner l'étudiant récupéré au département
+                    .orElseThrow(() -> new DepartementNotFoundException("Étudiant non trouvé"));
+
             etudiant.setDepartement(departement);
-            // Ajouter l'étudiant à l'ensemble d'étudiants
             etudiantsSet.add(etudiant);
         }
 
-        // Affectation des étudiants au département
         departement.setEtudiants(etudiantsSet);
-
-        // Sauvegarde du département
         departementRepository.save(departement);
     }
 
+    // Supprimer un étudiant d'un département
     public void removeEtudiantFromDepartement(Integer etudiantId) {
-        Etudiant etudiant = etudiantRepository.findById(etudiantId).orElseThrow(() ->
-                new RuntimeException("L'étudiant n'existe pas"));
+        Etudiant etudiant = etudiantRepository.findById(etudiantId)
+                .orElseThrow(() -> new DepartementNotFoundException("L'étudiant n'existe pas"));
 
-        // Retirer l'étudiant du département
         etudiant.setDepartement(null);
-        etudiantRepository.save(etudiant); // Enregistrer les modifications
+        etudiantRepository.save(etudiant);
     }
 
-
-
-
+    // Compter les étudiants dans un département
     public Integer countEtudiantsInDepartement(Integer departementId) {
-        // Vérifier si l'ID du département est valide (non nul et supérieur à zéro)
         if (departementId == null || departementId <= 0) {
-            throw new RuntimeException("Aucun département trouvé");
+            throw new DepartementNotFoundException("Aucun département trouvé");
         }
 
-        // Récupérer le département en fonction de l'ID fourni
         Departement departement = retrieveDepartement(departementId);
 
-        // Vérifier si le département existe
-        if (departement == null) {
-            throw new RuntimeException("Département non trouvé");
-        }
-
-        // Compter le nombre d'étudiants associés au département
         Integer nombreEtudiants = (departement.getEtudiants() != null) ?
-                departement.getEtudiants().size() : 0; // Assurez-vous de gérer le cas où la liste est nulle
+                departement.getEtudiants().size() : 0;
 
-        // Log du résultat pour traçabilité
         log.info("Le département avec l'ID {} contient {} étudiant(s)", departementId, nombreEtudiants);
 
-        // Retourner le nombre d'étudiants
         return nombreEtudiants;
     }
-
 
     // Vérifier si un étudiant est dans un département
     public boolean isEtudiantInDepartement(Integer etudiantId, Integer departementId) {
         Etudiant etudiant = etudiantRepository.findById(etudiantId)
-                .orElseThrow(() -> new RuntimeException("L'étudiant n'existe pas"));
+                .orElseThrow(() -> new DepartementNotFoundException("L'étudiant n'existe pas"));
 
         return etudiant.getDepartement() != null && etudiant.getDepartement().getIdDepart().equals(departementId);
     }
 
-
-
-
-
 }
-
