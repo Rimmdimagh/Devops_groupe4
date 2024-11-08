@@ -14,7 +14,7 @@ services:
       - db:/var/lib/mysql  # Specify the mount point within the container
 
   spring-boot-app:
-    image: mehdibedoui/foyerspring:latest
+    image: azizmkadem/foyerback:latest
     container_name: app-back
     ports:
       - "8085:8085"
