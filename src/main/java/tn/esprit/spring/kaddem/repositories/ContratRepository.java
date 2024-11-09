@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @Repository
-public interface ContratRepository extends CrudRepository<Contrat, Integer> {
+public interface ContratRepository extends JpaRepository<Contrat, Integer> {
 
     @Query("SELECT count(c) FROM Contrat c where ((c.archive=true) and  ((c.dateDebutContrat BETWEEN :startDate AND :endDate)) or(c.dateFinContrat BETWEEN :startDate AND :endDate))")
 public Integer getnbContratsValides(@Param("startDate") Date startDate, @Param("endDate") Date endDate);

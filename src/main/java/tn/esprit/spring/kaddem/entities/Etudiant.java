@@ -21,16 +21,16 @@ public class Etudiant implements Serializable{
     @Enumerated(EnumType.STRING)
     private Option op;
     @OneToMany(mappedBy="etudiant", cascade = CascadeType.ALL)
-
+    @JsonIgnore
     private Set<Contrat> Contrats;
     @ManyToOne
     @JsonIgnore
     private Departement departement;
-  //  @ManyToMany(cascade =CascadeType.ALL)
+    //  @ManyToMany(cascade =CascadeType.ALL)
     @ManyToMany(mappedBy="etudiants")
 
     @JsonIgnore
-  //  private Set<Equipe> equipes ;
+    //  private Set<Equipe> equipes ;
     private List<Equipe> equipes ;
     public Etudiant() {
         // TODO Auto-generated constructor stub
