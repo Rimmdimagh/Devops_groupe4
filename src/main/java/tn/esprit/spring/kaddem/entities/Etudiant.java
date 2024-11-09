@@ -21,7 +21,7 @@ public class Etudiant implements Serializable{
     @Enumerated(EnumType.STRING)
     private Option op;
     @OneToMany(mappedBy="etudiant", cascade = CascadeType.ALL)
-    @JsonIgnore
+
     private Set<Contrat> Contrats;
     @ManyToOne
     @JsonIgnore
