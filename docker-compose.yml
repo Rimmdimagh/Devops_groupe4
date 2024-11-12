@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  # Service MySQL
+  mysqlDb:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD="root"
+      - MYSQL_DATABASE=kaddemdb
+    ports:
+      - "3307:3306"  # Utilisez un autre port si 3306 est déjà pris
+    volumes:
+      - db:/var/lib/mysql
+
+  # Service application Kaddem
+  app-kaddem:
+    depends_on:
+      - mysqlDb
+    image: rimmdimagh/kaddem:1.0.0
+    restart: on-failure
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url=jdbc:mysql://mysqlDb:3306/kaddemdb?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+        "spring.datasource.username":"root",
+        "spring.datasource.password":""
+      }'
+    stdin_open: true
+    tty: true
+
+  # Service SonarQube
+  sonarqube:
+    image: sonarqube
+    ports:
+      - "9001:9000"
+
+
+  # Service Nexus
+  nexus:
+    image: sonatype/nexus3
+    ports:
+      - "8082:8081"
+
+volumes:
+  db:

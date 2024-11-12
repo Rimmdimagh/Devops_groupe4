@@ -17,6 +17,15 @@ pipeline {
             }
       }
 
+        stage('docker-compose') {
+            steps {
+                script {
+                          // Assurez-vous que le fichier docker-compose.yml existe dans le repo
+                          sh 'docker-compose -f docker-compose.yml up -d'
+                      }
+                }
+              }
+
         // Ajoute d'autres étapes comme le build, les tests, etc. ici
 
         stage('Maven Build') {
