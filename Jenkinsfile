@@ -17,7 +17,7 @@ pipeline {
             }
       }
 
-        stage('dockkk') {
+        stage('dockkkkkkkkkkkkkk') {
             steps {
                 script {
                           // Assurez-vous que le fichier docker-compose.yml existe dans le repo
