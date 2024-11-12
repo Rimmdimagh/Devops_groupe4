@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Git') {
             steps {
-                git url: 'https://github.com/Rimmdimagh/5BI3-G4_Kaddem.git', branch: 'DorraZorgui'
+                git url: 'https://github.com/Rimmdimagh/5BI3-G4_Kaddem.git', branch: 'DorraZorguiKaddem'
             }
         }
 
