@@ -17,11 +17,12 @@ pipeline {
             }
       }
 
-        stage('dockkkkkkkkkkkkkk') {
+        stage('docker compose') {
             steps {
                 script {
                           // Assurez-vous que le fichier docker-compose.yml existe dans le repo
-                          sh 'docker-compose -f docker-compose.yml up -d'
+                          sh 'docker compose down'
+                          sh 'docker compose up -d'
                       }
                 }
               }
