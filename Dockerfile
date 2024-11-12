@@ -15,7 +15,8 @@ WORKDIR /app
 RUN mkdir -p /app/logs && chmod -R 777 /app
 
 # COPY : Copier le fichier JAR généré par ton projet dans le conteneur
-COPY target/kaddem-0.0.1-SNAPSHOT.jar /app/kaddem-app.jar
+COPY target/kaddem-0.0.1.jar /app/kaddem-app.jar
+
 
 
 
