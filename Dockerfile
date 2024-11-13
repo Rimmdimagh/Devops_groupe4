@@ -1,7 +1,8 @@
 # FROM : Définir depuis quelle base votre image va être créée
 FROM openjdk:17-jdk-alpine
 # COPY : Copier le fichier JAR généré par ton projet dans le conteneur
-COPY target/kaddem-0.0.1.jar kaddem-app.jar
+COPY target/kaddem-0.0.1.jar /app/kaddem-app.jar
+
 
 
 
