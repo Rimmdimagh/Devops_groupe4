@@ -9,7 +9,7 @@ services:
       - MYSQL_ROOT_PASSWORD=""
       - MYSQL_DATABASE=kaddemdb
     ports:
-      - "3307:3306"  # Utilisez un autre port si 3306 est déjà pris
+      - "3308:3306"  # Utilisez un autre port si 3306 est déjà pris
     volumes:
       - db:/var/lib/mysql
 
