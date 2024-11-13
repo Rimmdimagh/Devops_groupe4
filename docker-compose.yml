@@ -6,7 +6,7 @@ services:
   sonarqube:
     image: sonarqube:8.9.7-community
     ports:
-      - "9000:9000"
+      - "9100:9000"
       - "9001:9001"
     volumes:
       - 'SonarQube_data:/opt/sonarqube/data'
