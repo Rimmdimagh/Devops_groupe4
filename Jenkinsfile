@@ -26,34 +26,9 @@ pipeline {
                       }
                 }
               }
-        stage('Start Prometheus') {
-                    steps {
-                        script {
-                            // Lancer Prometheus via Docker
-                            sh """
-                                docker run -d \
-                                --name prometheus \
-                                -p 9090:9090 \
-                                -v \$(pwd)/${PROMETHEUS_CONFIG}:/etc/prometheus/prometheus.yml \
-                                prom/prometheus
-                            """
-                        }
-                    }
-                }
 
-        stage('Start Grafana') {
-                    steps {
-                        script {
-                            // Lancer Grafana via Docker
-                            sh """
-                                docker run -d \
-                                --name grafana \
-                                -p 3000:3000 \
-                                grafana/grafana
-                            """
-                        }
-                    }
-                }
+
+        
 
         // Ajoute d'autres étapes comme le build, les tests, etc. ici
 
