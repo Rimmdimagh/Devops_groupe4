@@ -20,7 +20,7 @@ services:
     image: rimmdimagh/kaddem:1.0.0
     restart: on-failure
     ports:
-      - "8089:8089"
+      - "8090:8089"
     environment:
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.url=jdbc:mysql://mysqlDb:3306/kaddemdb?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
