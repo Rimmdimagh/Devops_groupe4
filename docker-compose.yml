@@ -6,14 +6,14 @@ services:
 
   # Service application Kaddem
   app-kaddem:
-   
+
     image: rimmdimagh/kaddem:1.0.0
     restart: on-failure
     ports:
       - "8090:8089"
     environment:
       SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url=jdbc:mysql://localhost:3306/kaddem\db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+        "spring.datasource.url=jdbc:mysql://host.docker.internal:3306/kaddem\db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
         "spring.datasource.username":"root",
         "spring.datasource.password":""
       }'
