@@ -43,45 +43,6 @@ public class ContratServiceImpl implements IContratService{
 		contratRepository.delete(c);
 	}
 
-	/*public Contrat affectContratToEtudiant(Integer idContrat, String nomE, String prenomE) {
-		List<Etudiant> etudiants = etudiantRepository.findByNomEAndPrenomE(nomE, prenomE);
-
-		if (etudiants.isEmpty()) {
-			throw new RuntimeException("No student found with the given name.");
-		} else if (etudiants.size() > 1) {
-			throw new RuntimeException("Multiple students found with the same name. Please refine the search.");
-		}
-
-		Etudiant e = etudiants.get(0);  // Assuming you take the first result
-		Contrat ce = contratRepository.findByIdContrat(idContrat);
-
-		// Rest of the code remains the same
-		ce.setEtudiant(e);
-		contratRepository.save(ce);
-		return ce;
-	}*/
-	/*public Contrat affectContratToEtudiant(Integer idContrat, String nomE, String prenomE) {
-		List<Etudiant> etudiants = etudiantRepository.findByNomEAndPrenomE(nomE, prenomE);
-		if (etudiants.size() > 1) {
-			throw new RuntimeException("Multiple students found with the same name. Please refine the search.");
-		}
-		Etudiant e = etudiants.get(0); // Get the first (and ideally, only) result
-		Contrat ce = contratRepository.findByIdContrat(idContrat);
-		Set<Contrat> contrats = e.getContrats();
-		Integer nbContratsActifs = 0;
-		for (Contrat contrat : contrats) {
-			if (contrat.getArchive() != null && !contrat.getArchive()) {
-				nbContratsActifs++;
-			}
-		}
-		if (nbContratsActifs <= 4) {
-			ce.setEtudiant(e);
-			contratRepository.save(ce);
-		}
-		return ce;
-	}*/
-
-
 
 
 	public Contrat affectContratToEtudiant (Integer idContrat, String nomE, String prenomE){
@@ -104,83 +65,80 @@ public class ContratServiceImpl implements IContratService{
 	public 	Integer nbContratsValides(Date startDate, Date endDate){
 		return contratRepository.getnbContratsValides(startDate, endDate);
 	}
+
+
+	@Override
 	public void retrieveAndUpdateStatusContrat() {
-		// Retrieve all contracts
 		List<Contrat> contrats = contratRepository.findAll();
+		List<Contrat> contrats15j = new ArrayList<>(); // Initialize list for logging
+		List<Contrat> contratsAarchiver = new ArrayList<>(); // Initialize list for archiving
 
-		// Initialize the lists as empty lists
-		List<Contrat> contrats15j = new ArrayList<>();
-		List<Contrat> contratsAarchiver = new ArrayList<>();
-
-		// Loop through all contracts and check their status
 		for (Contrat contrat : contrats) {
 			Date dateSysteme = new Date();
-			if (!contrat.getArchive()) {  // If the contract is not archived
-				long difference_In_Time = dateSysteme.getTime() - contrat.getDateFinContrat().getTime();
-				long difference_In_Days = difference_In_Time / (1000 * 60 * 60 * 24);  // Convert milliseconds to days
 
-				// Check if it's 15 days before the end date
-				if (difference_In_Days == 15) {
+			if (!contrat.getArchive()) { // Only process non-archived contracts
+				long differenceInTime = contrat.getDateFinContrat().getTime() - dateSysteme.getTime();
+				long differenceInDays = differenceInTime / (1000 * 60 * 60 * 24); // Convert milliseconds to days
+
+				if (differenceInDays == 15) {
 					contrats15j.add(contrat);
-					log.info("Contrat to notify (15 days left): " + contrat);
+					log.info("Contrat approaching expiry in 15 days: " + contrat);
 				}
 
-				// Check if the contract has expired (0 days remaining)
-				if (difference_In_Days == 0) {
-					contratsAarchiver.add(contrat);
-					contrat.setArchive(true);  // Archive the contract
-					contratRepository.save(contrat);  // Save the updated contract
-				}
-			}
-		}
-
-		// You can now do something with contrats15j and contratsAarchiver if needed, e.g., send notifications
-	}
-	/*public void retrieveAndUpdateStatusContrat(){
-		List<Contrat>contrats=contratRepository.findAll();
-		List<Contrat>contrats15j=null;
-		List<Contrat>contratsAarchiver=null;
-		for (Contrat contrat : contrats) {
-			Date dateSysteme = new Date();
-			if (contrat.getArchive()==false) {
-				long difference_In_Time = dateSysteme.getTime() - contrat.getDateFinContrat().getTime();
-				long difference_In_Days = (difference_In_Time / (1000 * 60 * 60 * 24)) % 365;
-				if (difference_In_Days==15){
-					contrats15j.add(contrat);
-					log.info(" Contrat : " + contrat);
-				}
-				if (difference_In_Days==0) {
+				if (differenceInDays <= 0) { // Contract expired, archive it
 					contratsAarchiver.add(contrat);
 					contrat.setArchive(true);
-					contratRepository.save(contrat);
+					contratRepository.save(contrat); // Save updated contract
+					log.info("Archived contrat: " + contrat);
 				}
 			}
 		}
-	}*/
-	public float getChiffreAffaireEntreDeuxDates(Date startDate, Date endDate){
-		float difference_In_Time = endDate.getTime() - startDate.getTime();
-		float difference_In_Days = (difference_In_Time / (1000 * 60 * 60 * 24)) % 365;
-		float difference_In_months =difference_In_Days/30;
-		List<Contrat> contrats=contratRepository.findAll();
-		float chiffreAffaireEntreDeuxDates=0;
+	}
+
+	@Override
+	public float getChiffreAffaireEntreDeuxDates(Date startDate, Date endDate) {
+		// Validate input dates
+		if (startDate == null || endDate == null || startDate.after(endDate)) {
+			throw new IllegalArgumentException("Invalid date range");
+		}
+
+		// Calculate the number of months between startDate and endDate
+		long differenceInMillis = endDate.getTime() - startDate.getTime();
+		float differenceInDays = (float) differenceInMillis / (1000 * 60 * 60 * 24);
+		float differenceInMonths = differenceInDays / 30;
+
+		List<Contrat> contrats = contratRepository.findAll();
+		float totalRevenue = 0;
+
 		for (Contrat contrat : contrats) {
-			if (contrat.getSpecialite()== Specialite.IA){
-				chiffreAffaireEntreDeuxDates+=(difference_In_months*300);
-			} else if (contrat.getSpecialite()== Specialite.CLOUD) {
-				chiffreAffaireEntreDeuxDates+=(difference_In_months*400);
-			}
-			else if (contrat.getSpecialite()== Specialite.RESEAUX) {
-				chiffreAffaireEntreDeuxDates+=(difference_In_months*350);
-			}
-			else //if (contrat.getSpecialite()== Specialite.SECURITE)
-			{
-				chiffreAffaireEntreDeuxDates+=(difference_In_months*450);
+			if (!contrat.getArchive()) { // Only consider active contracts
+				float monthlyRate = 0;
+
+				// Determine the monthly rate based on the contract's specialite
+				switch (contrat.getSpecialite()) {
+					case IA:
+						monthlyRate = 300;
+						break;
+					case CLOUD:
+						monthlyRate = 400;
+						break;
+					case RESEAUX:
+						monthlyRate = 350;
+						break;
+					case SECURITE:
+						monthlyRate = 450;
+						break;
+					default:
+						monthlyRate = 0;
+				}
+
+				totalRevenue += monthlyRate * differenceInMonths;
 			}
 		}
-		return chiffreAffaireEntreDeuxDates;
 
-
+		return totalRevenue;
 	}
+
 
 
 }

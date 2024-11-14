@@ -5,29 +5,27 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import tn.esprit.spring.kaddem.entities.Contrat;
 import tn.esprit.spring.kaddem.entities.Etudiant;
 import tn.esprit.spring.kaddem.entities.Specialite;
 import tn.esprit.spring.kaddem.repositories.ContratRepository;
 import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
 import tn.esprit.spring.kaddem.services.ContratServiceImpl;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringBootTest
-@RunWith(SpringRunner.class)
-
+@SpringBootTest(classes = KaddemApplication.class)
 public class ContratServiceImplJunitTest {
 
     @Autowired
@@ -44,47 +42,18 @@ public class ContratServiceImplJunitTest {
 
     @BeforeEach
     void setUp() {
-        // Initialize real objects
         contrat = new Contrat();
-        contrat.setIdContrat(1);
-        contrat.setDateDebutContrat(new Date()); // Set the start date
-        contrat.setDateFinContrat(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 30))); // Set the end date (30 days later)
-        contrat.setSpecialite(Specialite.IA); // Set the specialite
-        contrat.setMontantContrat(1000); // Set the amount
-        contrat.setArchive(false); // Set archive status
+        contrat.setDateDebutContrat(new Date()); // Set start date to now
+        contrat.setDateFinContrat(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 30))); // 30 days later
+        contrat.setSpecialite(Specialite.IA); // Assign specialite
+        contrat.setMontantContrat(1000); // Assign montant
+        contrat.setArchive(false); // Initially not archived
 
         etudiant = new Etudiant();
         etudiant.setNomE("John");
         etudiant.setPrenomE("Doe");
-        Set<Contrat> contrats = new HashSet<>();
-        etudiant.setContrats(contrats);
+        etudiant.setContrats(new HashSet<>()); // Initialize empty contracts set
     }
-
-
-
-   /* @Test
-    @Transactional
-    public void testAffectContratToEtudiant() {
-        // Arrange: Create and save a unique student
-        Etudiant etudiant = new Etudiant();
-        etudiant.setNomE("John");
-        etudiant.setPrenomE("Doe");
-        etudiantRepository.save(etudiant);
-
-        // Create and save a contract
-        Contrat contrat = new Contrat();
-        contrat.setSpecialite(Specialite.IA);
-        contratRepository.save(contrat);
-
-        // Act: Call the method to affect the contract to the student
-        Contrat result = contratService.affectContratToEtudiant(contrat.getIdContrat(), etudiant.getNomE(), etudiant.getPrenomE());
-
-        // Assert: Check that the contract is correctly affected
-        assertNotNull(result);
-        assertEquals(etudiant.getNomE(), result.getEtudiant().getNomE());
-    }
-
-*/
 
     @Test
     @Transactional
@@ -92,84 +61,119 @@ public class ContratServiceImplJunitTest {
         // Act: Add a new contract
         Contrat newContrat = contratService.addContrat(contrat);
 
-        // Assert: Verify that the contract was added
+        // Assert: Verify the contract is added
         assertNotNull(newContrat, "The new contract should not be null");
-        assertEquals(contrat.getIdContrat(), newContrat.getIdContrat(), "The contract ID should match");
+        assertEquals(contrat.getSpecialite(), newContrat.getSpecialite(), "The contract specialite should match");
     }
 
     @Test
     @Transactional
     void testRetrieveContrat() {
         // Arrange: Save the contract
-        contratRepository.save(contrat);
+        Contrat savedContrat = contratService.addContrat(contrat);
 
         // Act: Retrieve the contract
-        Contrat retrievedContrat = contratService.retrieveContrat(contrat.getIdContrat());
+        Contrat retrievedContrat = contratService.retrieveContrat(savedContrat.getIdContrat());
 
-        // Assert: Verify that the contract was retrieved correctly
+        // Assert: Verify the contract is retrieved successfully
         assertNotNull(retrievedContrat, "The retrieved contract should not be null");
-        assertEquals(contrat.getIdContrat(), retrievedContrat.getIdContrat(), "The contract ID should match");
+        assertEquals(savedContrat.getIdContrat(), retrievedContrat.getIdContrat(), "The contract ID should match");
     }
 
-   /* @Test
+    @Test
     @Transactional
     void testRemoveContrat() {
         // Arrange: Save the contract
-        contratRepository.save(contrat);
+        Contrat savedContrat = contratService.addContrat(contrat);
 
         // Act: Remove the contract
-        contratService.removeContrat(contrat.getIdContrat());
+        contratService.removeContrat(savedContrat.getIdContrat());
 
-        // Assert: Verify that the contract was removed
-        Optional<Contrat> removedContrat = contratRepository.findById(contrat.getIdContrat());
-        assertTrue(removedContrat.isEmpty(), "The contract should be removed from the repository");
+        // Assert: Verify the contract is removed
+        Contrat removedContrat = contratService.retrieveContrat(savedContrat.getIdContrat());
+        assertNull(removedContrat, "The contract should be null after removal");
     }
 
-   /* @Test
+    @Test
+    @Transactional
+    void testAffectContratToEtudiant() {
+        // Arrange: Save the student and contract
+        etudiantRepository.save(etudiant);
+        Contrat savedContrat = contratService.addContrat(contrat);
+
+        // Act: Assign the contract to the student
+        Contrat updatedContrat = contratService.affectContratToEtudiant(
+                savedContrat.getIdContrat(),
+                etudiant.getNomE(),
+                etudiant.getPrenomE()
+        );
+
+        // Assert: Verify the contract is assigned to the student
+        assertNotNull(updatedContrat.getEtudiant(), "The student should be assigned to the contract");
+        assertEquals(etudiant.getNomE(), updatedContrat.getEtudiant().getNomE(), "The student's name should match");
+    }
+
+    @Test
     @Transactional
     void testNbContratsValides() {
-        // Arrange: Save the contract
-        contratRepository.save(contrat);
+        // Arrange: Save the contract within a valid date range
+        contrat.setDateDebutContrat(new Date());
+        contrat.setDateFinContrat(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 10))); // 10 days later
+        contratService.addContrat(contrat);
 
-        // Act: Get the number of valid contracts
-        Integer result = contratService.nbContratsValides(new Date(), new Date());
+        // Act: Retrieve number of valid contracts
+        Integer validContracts = contratService.nbContratsValides(
+                new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24)), // Yesterday
+                new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 15)) // 15 days later
+        );
 
-        // Assert: Check that the number of valid contracts is correct
-        assertEquals(1, result, "There should be 1 valid contract in the date range");
-    }*/
+        // Assert: Verify the number of valid contracts
+        assertEquals(1, validContracts, "The number of valid contracts should be 1");
+    }
+
 
     @Test
     @Transactional
     void testRetrieveAndUpdateStatusContrat() {
-        // Arrange: Set the contract end date to today and save it
-        Calendar cal = Calendar.getInstance();
-        contrat.setDateFinContrat(cal.getTime());
-        contratRepository.save(contrat);
+        // Arrange: Create and save a contract with an expired date
+        Contrat expiredContrat = new Contrat();
+        expiredContrat.setDateDebutContrat(new Date());
+        expiredContrat.setDateFinContrat(new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24))); // 1 day past expiry
+        expiredContrat.setSpecialite(Specialite.IA);
+        expiredContrat.setArchive(false);
+        expiredContrat.setMontantContrat(1000);
+        contratRepository.save(expiredContrat);
 
         // Act: Call the method to update contract status
         contratService.retrieveAndUpdateStatusContrat();
 
-        // Assert: Verify that the contract was archived
-        Contrat updatedContrat = contratRepository.findById(contrat.getIdContrat()).get();
+        // Assert: Verify the contract is archived
+        Contrat updatedContrat = contratRepository.findById(expiredContrat.getIdContrat()).orElse(null);
+        assertNotNull(updatedContrat, "The contract should exist");
         assertTrue(updatedContrat.getArchive(), "The contract should be archived");
     }
+
 
     @Test
     @Transactional
     void testGetChiffreAffaireEntreDeuxDates() {
-        // Arrange: Set up a date range of 30 days and assign a specialty to the contract
-        Calendar cal = Calendar.getInstance();
-        Date startDate = cal.getTime();
-        cal.add(Calendar.DAY_OF_MONTH, 30);
-        Date endDate = cal.getTime();
+        // Arrange: Create and save contracts
+        Contrat contratIA = new Contrat();
+        contratIA.setDateDebutContrat(new Date());
+        contratIA.setDateFinContrat(new Date());
+        contratIA.setSpecialite(Specialite.IA);
+        contratIA.setArchive(false);
+        contratIA.setMontantContrat(1000);
+        contratRepository.save(contratIA);
 
-        contrat.setSpecialite(Specialite.IA);
-        contratRepository.save(contrat);
+        Date startDate = new Date(System.currentTimeMillis() - (1000L * 60 * 60 * 24 * 30)); // 1 month ago
+        Date endDate = new Date();
 
-        // Act: Calculate the revenue for the contract
-        float result = contratService.getChiffreAffaireEntreDeuxDates(startDate, endDate);
+        // Act: Calculate revenue
+        float revenue = contratService.getChiffreAffaireEntreDeuxDates(startDate, endDate);
 
-        // Assert: Verify that the revenue is correctly calculated
-        assertEquals(300.0f, result, "The revenue for 1 month of IA specialty should be 300.0");
+        // Assert: Verify revenue is correct
+        assertEquals(300.0f, revenue, "The revenue for one IA contract for one month should be 300.0");
     }
+
 }
