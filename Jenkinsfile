@@ -34,14 +34,14 @@ pipeline {
 
 
         stage('docker compose') {
-                    steps {
-                        script {
+            steps {
+                 script {
                                   // Assurez-vous que le fichier docker-compose.yml existe dans le repo
                                   sh 'docker compose down'
                                   sh 'docker compose up -d'
-                              }
-                        }
-                    }
+                           }
+                 }
+        }
 
         stage('Tests - JUnit/Mockito') {
             steps {
