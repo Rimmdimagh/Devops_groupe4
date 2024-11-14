@@ -38,6 +38,14 @@ pipeline {
                            }
                  }
         }
+        // Stage 10: Deploy the artifact to Nexus repository
+        stage('Deploy to Nexus') {
+            steps {
+                        echo 'Deploying to Nexus Repository'
+                        // Remplacez <nexus-ip> par l'adresse IP réelle de votre serveur Nexus
+                        sh 'mvn clean deploy -DskipTests'
+            }
+        }
 
         stage('Tests - JUnit/Mockito') {
             steps {
