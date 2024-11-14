@@ -17,15 +17,7 @@ pipeline {
             }
          }
 
-        stage('docker compose') {
-            steps {
-                script {
-                          // Assurez-vous que le fichier docker-compose.yml existe dans le repo
-                          sh 'docker compose down'
-                          sh 'docker compose up -d'
-                      }
-                }
-              }
+
 
         // Ajoute d'autres étapes comme le build, les tests, etc. ici
 
@@ -39,6 +31,17 @@ pipeline {
                         sh 'mvn sonar:sonar -Dsonar.host.url=http://192.168.50.4:9100 -Dsonar.login=admin -Dsonar.password=Dorrazorgui2025@1'
                     }
                 }
+
+
+        stage('docker compose') {
+                    steps {
+                        script {
+                                  // Assurez-vous que le fichier docker-compose.yml existe dans le repo
+                                  sh 'docker compose down'
+                                  sh 'docker compose up -d'
+                              }
+                        }
+                    }
 
         stage('Tests - JUnit/Mockito') {
             steps {
