@@ -7,6 +7,7 @@ import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.entities.DepartementDTO;
 import tn.esprit.spring.kaddem.services.IDepartementService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -43,10 +44,11 @@ public class DepartementRestController {
 
 	// http://localhost:8089/Kaddem/departement/update-departement
 	@PutMapping("/update-departement")
-	public Departement updateDepartement(@RequestBody Departement e) {
-
-		Departement departement= departementService.updateDepartement(e);
-		return departement;
+	public Departement updateDepartement(@Valid @RequestBody DepartementDTO DepartementDTO) {
+		Departement departement = new Departement();
+		departement.setIdDepart(DepartementDTO.getIdDepart());
+		departement.setNomDepart(DepartementDTO.getNomDepart());
+		return departementService.updateDepartement(departement);
 	}
 
 }
