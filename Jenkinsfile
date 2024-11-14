@@ -15,7 +15,7 @@ pipeline {
                     sh 'systemctl is-active --quiet mysql || systemctl start mysql'
                 }
             }
-         }
+        }
 
 
 
