@@ -17,10 +17,6 @@ pipeline {
             }
         }
 
-
-
-        // Ajoute d'autres étapes comme le build, les tests, etc. ici
-
         stage('Maven Build') {
             steps {
                         sh 'mvn clean install'
