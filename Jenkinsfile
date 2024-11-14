@@ -15,7 +15,7 @@ pipeline {
                     sh 'systemctl is-active --quiet mysql || systemctl start mysql'
                 }
             }
-      }
+         }
 
         stage('docker compose') {
             steps {
@@ -40,28 +40,19 @@ pipeline {
                     }
                 }
 
-
-
-
-
-
         stage('Tests - JUnit/Mockito') {
             steps {
                 sh 'mvn test'
             }
         }
-
-
-
-
-    }
-post {
-    success {
+     }
+    post {
+      success {
         echo 'La pipeline s\'est terminée avec succès. Aucune action requise.'
-    }
-    failure {
+      }
+      failure {
         echo 'La pipeline a échoué. Veuillez vérifier les logs de Jenkins pour plus de détails.'
+      }
     }
-}
 
 }
