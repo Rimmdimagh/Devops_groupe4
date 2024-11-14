@@ -36,7 +36,11 @@ pipeline {
                 sh 'mvn clean install -DskipTests '
             }
         }
-
+stage('Build package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
 
 
         // Stage 6: Run JUnit/Mockito tests
