@@ -1,4 +1,4 @@
-
+version: "2"
 
 services:
   # MySQL Service
@@ -11,38 +11,42 @@ services:
     ports:
       - "3307:3306"  # MySQL Database
 
-  # Kaddem Application Service
-  app-kaddem:
-    depends_on:
-      - mysqlDb
-    image: rimmdimagh/kaddem:1.0.0
-    restart: on-failure
-    ports:
-      - "8089:8089"  # App port
-    environment:
-      SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url":"jdbc:mysql://mysqlDb:3306/kaddemdb?createDatabaseIfNotExist=true",
-        "spring.datasource.username":"root",
-        "spring.datasource.password":""
-      }'
-
-  # SonarQube Service
+  # Service SonarQube
   sonarqube:
-    image: sonarqube
+    image: sonarqube:8.9.7-community
     ports:
-      - "9000:9000"  # SonarQube
+      - "9100:9000"
+      - "9001:9001"
+    volumes:
+      - 'SonarQube_data:/opt/sonarqube/data'
+      - 'SonarQube_extensions:/opt/sonarqube/extensions'
+      - 'SonarQube_logs:/opt/sonarqube/logs'
 
-  # Nexus Service
+  # Service Nexus
   nexus:
     image: sonatype/nexus3
     ports:
-      - "8081:8081"  # Nexus Repository
+      - "8100:8081"
+      - "8082:8082"
+    volumes:
+      - 'nexus-data:/nexus-data'
 
-  # Prometheus Service
-  prometheus:
-    image: prom/prometheus
+
+
+  # Service Grafana
+  grafana:
+    image: grafana/grafana:latest
     ports:
-      - "9090:9090"  # Prometheus Monitoring
+      - "3001:3000"
+    volumes:
+      - 'grafana-data:/var/lib/grafana'
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=07248745
 
 volumes:
-  db:
+  SonarQube_data:
+  SonarQube_extensions:
+  SonarQube_logs:
+  nexus-data:
+  grafana-data:
