@@ -43,13 +43,10 @@ public class DepartementRestController {
 
 	// http://localhost:8089/Kaddem/departement/update-departement
 	@PutMapping("/update-departement")
-	public Departement updateDepartement(@RequestBody DepartementDTO departementDTO) {
+	public Departement updateDepartement(@RequestBody Departement e) {
 
-		Departement departement = new Departement();
-		departement.setIdDepart(departementDTO.getIdDepart());
-		departement.setNomDepart(departementDTO.getNomDepart());
-		departement.setEtudiants(null);
-		return departementService.updateDepartement(departement);
+		Departement departement= departementService.updateDepartement(e);
+		return departement;
 	}
 
 }
