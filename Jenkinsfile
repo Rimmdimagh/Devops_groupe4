@@ -11,11 +11,27 @@ pipeline {
         stage('Check and Start MySQL') {
             steps {
                 script {
-                    // Check if MySQL is active, and start it if not
+                    // Vérifie si MySQL est actif, sinon le démarre
                     sh 'systemctl is-active --quiet mysql || systemctl start mysql'
                 }
             }
-        }
+      }
+
+        stage('docker compose') {
+            steps {
+                script {
+                          // Assurez-vous que le fichier docker-compose.yml existe dans le repo
+                          sh 'docker compose down'
+                          sh 'docker compose up -d'
+                      }
+                }
+              }
+
+
+
+
+
+        // Ajoute d'autres étapes comme le build, les tests, etc. ici
 
         stage('Maven Build') {
             steps {
@@ -28,35 +44,23 @@ pipeline {
                 sh 'mvn test'
             }
         }
-
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    // Correct SonarQube URL and ensure proper configuration
-                    sh 'mvn sonar:sonar -Dsonar.host.url=http://192.168.50.4:9100 -Dsonar.login=admin -Dsonar.password=Dorrazorgui2025@1'
-                }
-            }
-        }
+                                sh 'mvn sonar:sonar -Dsonar.host.url=http://http://192.168.50.4:9000 -Dsonar.login=admin -Dsonar.password=Dorrazorgui2025@1'
+                            }
+                        }
 
-        stage('Docker Compose') {
-            steps {
-                script {
-                    // Ensure docker-compose commands are executed
-                    sh '''
-                        docker compose down || echo "Docker Compose already down."
-                        docker compose up -d
-                    '''
-                }
-            }
-        }
-    }
 
-    post {
-        success {
-            echo 'The pipeline completed successfully. No action required.'
-        }
-        failure {
-            echo 'The pipeline failed. Please check the Jenkins logs for more details.'
-        }
+
+
     }
+post {
+    success {
+        echo 'La pipeline s\'est terminée avec succès. Aucune action requise.'
+    }
+    failure {
+        echo 'La pipeline a échoué. Veuillez vérifier les logs de Jenkins pour plus de détails.'
+    }
+}
+
 }
