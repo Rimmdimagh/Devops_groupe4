@@ -22,22 +22,15 @@ pipeline {
                         sh 'mvn clean install'
                    }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                        sh 'mvn sonar:sonar -Dsonar.host.url=http://192.168.50.4:9100 -Dsonar.login=admin -Dsonar.password=Dorrazorgui2025@1'
+
+         stage('Tests - JUnit/Mockito') {
+                    steps {
+                        sh 'mvn test'
                     }
                 }
 
 
-        stage('docker compose') {
-            steps {
-                 script {
-                                  // Assurez-vous que le fichier docker-compose.yml existe dans le repo
-                                  sh 'docker compose down'
-                                  sh 'docker compose up -d'
-                           }
-                 }
-        }
+
         // Stage 7: Generate JaCoCo code coverage report
        stage('Generate JaCoCo Report') {
           steps {
@@ -57,22 +50,36 @@ pipeline {
                         ])
           }
        }
+ stage('SonarQube Analysis') {
+            steps {
+                        sh 'mvn sonar:sonar -Dsonar.host.url=http://192.168.50.4:9100 -Dsonar.login=admin -Dsonar.password=Dorrazorgui2025@1'
+                    }
+                }
 
-        // Stage 10: Deploy the artifact to Nexus repository
+
+
+
         stage('Deploy to Nexus') {
-            steps {
-                        echo 'Deploying to Nexus Repository'
-                        // Remplacez <nexus-ip> par l'adresse IP réelle de votre serveur Nexus
-                        sh 'mvn clean deploy -DskipTests'
-            }
-        }
-
-        stage('Tests - JUnit/Mockito') {
-            steps {
-                sh 'mvn test'
-            }
-        }
+                    steps {
+                                echo 'Deploying to Nexus Repository'
+                                // Remplacez <nexus-ip> par l'adresse IP réelle de votre serveur Nexus
+                                sh 'mvn clean deploy -DskipTests'
+                    }
+                }
      }
+
+
+
+      stage('docker compose') {
+                 steps {
+                      script {
+                                       // Assurez-vous que le fichier docker-compose.yml existe dans le repo
+                                       sh 'docker compose down'
+                                       sh 'docker compose up -d'
+                                }
+                      }
+             }
+
     post {
       success {
         echo 'La pipeline s\'est terminée avec succès. Aucune action requise.'
