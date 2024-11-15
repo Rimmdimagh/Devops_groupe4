@@ -38,6 +38,26 @@ pipeline {
                            }
                  }
         }
+        // Stage 7: Generate JaCoCo code coverage report
+       stage('Generate JaCoCo Report') {
+          steps {
+                        echo 'Generating JaCoCo Report'
+                        sh 'mvn jacoco:report'
+          }
+       }
+
+       stage('JaCoCo Coverage Report') {
+          steps {
+                        echo 'Publishing JaCoCo Coverage Report'
+                        step([$class: 'JacocoPublisher',
+                              execPattern: '**/target/jacoco.exec',
+                              classPattern: '**/classes',
+                              sourcePattern: '**/src',
+                              exclusionPattern: '/target/**/,**/*Test,**/*_javassist/**'
+                        ])
+          }
+       }
+
         // Stage 10: Deploy the artifact to Nexus repository
         stage('Deploy to Nexus') {
             steps {
