@@ -52,7 +52,8 @@ pipeline {
                     // Run SonarQube analysis using Maven, passing the credentials for authentication
                  //   withCredentials([usernamePassword(credentialsId: 'sonar-credentials', usernameVariable: 'SONAR_USER', passwordVariable: 'SONAR_PASSWORD')]) {
                         sh "mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin@dmin123"
-                    }
+                   }
+                   }
                 }
             }
 
