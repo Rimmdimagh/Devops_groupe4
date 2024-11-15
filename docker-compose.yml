@@ -13,14 +13,7 @@ services:
       - 'SonarQube_extensions:/opt/sonarqube/extensions'
       - 'SonarQube_logs:/opt/sonarqube/logs'
 
-  # Service Nexus
-  nexus:
-    image: sonatype/nexus3
-    ports:
-      - "8100:8081"
-      - "8082:8082"
-    volumes:
-      - 'nexus-data:/nexus-data'
+
 
 
 
@@ -48,6 +41,5 @@ volumes:
   SonarQube_data:
   SonarQube_extensions:
   SonarQube_logs:
-  nexus-data:
   grafana-data:
   prometheus-data:
