@@ -1,25 +1,24 @@
 pipeline {
     agent any
 
-
-
     stages {
         stage('Checkout') {
             steps {
                 script {
                     // Checkout the specified branch from Git
-                    git branch: 'AzizMkadem-5BI3-G4', url: 'https://github.com/Rimmdimagh/5BI3-G4_Kaddem.git',credentialsId: 'bcbb38e8-c379-4043-8305-9c6684eb9f33'
+                    git branch: 'AzizMkadem-5BI3-G4', url: 'https://github.com/Rimmdimagh/5BI3-G4_Kaddem.git', credentialsId: 'bcbb38e8-c379-4043-8305-9c6684eb9f33'
                 }
             }
         }
 
         stage('List Files') {
-    steps {
-        script {
-            sh 'rm -rf /target'
+            steps {
+                script {
+                    // Remove target directory (make sure this is the correct path)
+                    sh 'rm -rf target'
+                }
+            }
         }
-    }
-}
 
         stage('Install Dependencies') {
             steps {
@@ -29,10 +28,11 @@ pipeline {
                 }
             }
         }
-        stage('package') {
+
+        stage('Package') {
             steps {
                 script {
-                    // Install project dependencies using Maven
+                    // Run Maven clean and package
                     sh 'mvn clean package'
                 }
             }
@@ -46,75 +46,74 @@ pipeline {
                 }
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
                 script {
                     // Run SonarQube analysis using Maven, passing the credentials for authentication
-                 //   withCredentials([usernamePassword(credentialsId: 'sonar-credentials', usernameVariable: 'SONAR_USER', passwordVariable: 'SONAR_PASSWORD')]) {
-                        sh "mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin@dmin123"
-                   }
-                   }
+                    sh "mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin@dmin123"
                 }
             }
+        }
 
         stage('Deploy to Nexus') {
             steps {
-              // withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
-                    sh "mvn deploy -Dmaven.test.skip=true "  //-Dusername=$NEXUS_USER -Dpassword=$NEXUS_PASSWORD
-                }
-            }
-
-         stage('Remove Old Docker Image') {
-            steps {
                 script {
-                    sh 'docker rmi -f azizmkadem/kaddemback:latest || true' // -f forces removal, and || true ignores errors
+                    // Deploy artifact to Nexus repository
+                    sh "mvn deploy -Dmaven.test.skip=true"
                 }
             }
         }
-//
+
+        stage('Remove Old Docker Image') {
+            steps {
+                script {
+                    // Remove the old Docker image (force remove)
+                    sh 'docker rmi -f azizmkadem/kaddemback:latest || true'
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
-
+                    // Build a new Docker image
                     sh 'docker build -t azizmkadem/kaddemback .'
-
                 }
             }
         }
 
-        stage('push docker image to docker hub') {
-	    steps {
-		withcredentials([usernamepassword(credentialsid: 'docker-hub-credentials', usernamevariable: 'docker_username', passwordvariable: 'docker_password')]) {
-		    sh 'echo "$docker_password" | docker login -u "$docker_username" --password-stdin'
-		    sh 'docker push azizmkadem/kaddemback:latest'
-		}
-
-	}
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'docker_username', passwordVariable: 'docker_password')]) {
+                    // Login to Docker Hub and push the image
+                    sh 'echo "$docker_password" | docker login -u "$docker_username" --password-stdin'
+                    sh 'docker push azizmkadem/kaddemback:latest'
+                }
+            }
+        }
 
         stage('Docker Compose Down') {
             steps {
-
-                    sh 'docker compose down'
-
+                // Bring down the Docker Compose setup
+                sh 'docker compose down'
             }
         }
 
         stage('Deploy with Docker Compose') {
             steps {
-
-                    sh 'docker compose up -d'
-                }
-
-        }
-        stage('restarting prometheus & grafana') {
-                                        steps {
-                                            echo 'Containers restarted :'
-                                            sh 'docker restart prometheus '
-                                            sh 'docker restart grafana '
-                                        }
-                                    }
+                // Bring up the Docker Compose setup in detached mode
+                sh 'docker compose up -d'
             }
+        }
 
-
+        stage('Restart Prometheus & Grafana') {
+            steps {
+                echo 'Restarting containers:'
+                // Restart Prometheus and Grafana containers
+                sh 'docker restart prometheus'
+                sh 'docker restart grafana'
+            }
+        }
     }
 }
