@@ -98,12 +98,30 @@ pipeline {
                 }
     }
 
-    post {
+
+  post {
         success {
-            echo 'The pipeline completed successfully. No further action is required.'
+            echo 'Pipeline succeeded. Sending success email...'
+            emailext(
+                to: 'dorra.zorgui@esprit.tn',
+                subject: "Pipeline Jenkins - Success - Build #${BUILD_NUMBER}",
+                body: """<p>The build was successful!</p>
+                         <p>Check the details here: <a href="${BUILD_URL}">${BUILD_URL}</a></p>""",
+                mimeType: 'text/html'
+            )
         }
         failure {
-            echo 'The pipeline failed. Please check Jenkins logs for more details.'
+            echo 'Pipeline failed. Sending failure email...'
+            emailext(
+                to: 'dorra.zorgui@esprit.tn',
+                subject: "Pipeline Jenkins - Failure - Build #${BUILD_NUMBER}",
+                body: """<p>The build failed.</p>
+                         <p>Check the details here: <a href="${BUILD_URL}">${BUILD_URL}</a></p>""",
+                mimeType: 'text/html'
+            )
+        }
+        always {
+            echo 'Pipeline completed.'
         }
     }
 }
