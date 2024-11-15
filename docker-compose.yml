@@ -22,6 +22,7 @@ services:
     volumes:
       - 'nexus-data:/nexus-data'
 
+
   # Service Grafana
   grafana:
     image: grafana/grafana:latest
@@ -33,10 +34,21 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=07248745
 
+  # Service Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - 'prometheus-data:/prometheus'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
 volumes:
   SonarQube_data:
   SonarQube_extensions:
   SonarQube_logs:
   nexus-data:
   grafana-data:
+  prometheus-data:
 
