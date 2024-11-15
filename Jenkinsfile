@@ -66,15 +66,7 @@ pipeline {
           stage('Docker Compose') {
                     steps {
                         dir('/vagrant/kaddem') {
-                            // Étape 1 : Vérifier les ports occupés
-                            sh 'sudo lsof -i -P -n | grep 8100 || true'
 
-                            // Étape 2 : Libérer le port 8100
-                            sh 'sudo fuser -k 8100/tcp || true'
-
-                            // Étape 3 : Nettoyer Docker
-                            sh 'docker compose down || true'
-                            sh 'docker network prune -f || true'
 
                             // Étape 4 : Lancer Docker Compose
                             sh 'docker compose up -d'
