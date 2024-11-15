@@ -9,7 +9,7 @@ ENV APP_NAME="Kaddem" \
 WORKDIR /app
 
 # Copier le fichier JAR généré dans le conteneur
-COPY target/kaddem-0.0.1-SNAPSHOT.jar /app/kaddem-app.jar
+COPY target/kaddem-0.0.1.jar /app/kaddem-app.jar
 
 # Exposer le port 8089 pour permettre l'accès à l'application Spring Boot
 EXPOSE 8089
