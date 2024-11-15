@@ -11,7 +11,7 @@ pipeline {
         stage('Check and Start MySQL') {
             steps {
                 script {
-                    // Vérifie si MySQL est actif, sinon le démarre
+                    // Check if MySQL is active, if not, start it
                     sh 'systemctl is-active --quiet mysql || systemctl start mysql'
                 }
             }
@@ -19,74 +19,67 @@ pipeline {
 
         stage('Maven Build') {
             steps {
-                        sh 'mvn clean install'
-                   }
+                sh 'mvn clean install'
+            }
         }
 
-         stage('Tests - JUnit/Mockito') {
-                    steps {
-                        sh 'mvn test'
-                    }
-                }
-
-
-
-        // Stage 7: Generate JaCoCo code coverage report
-       stage('Generate JaCoCo Report') {
-          steps {
-                        echo 'Generating JaCoCo Report'
-                        sh 'mvn jacoco:report'
-          }
-       }
-
-       stage('JaCoCo Coverage Report') {
-          steps {
-                        echo 'Publishing JaCoCo Coverage Report'
-                        step([$class: 'JacocoPublisher',
-                              execPattern: '**/target/jacoco.exec',
-                              classPattern: '**/classes',
-                              sourcePattern: '**/src',
-                              exclusionPattern: '/target/**/,**/*Test,**/*_javassist/**'
-                        ])
-          }
-       }
- stage('SonarQube Analysis') {
+        stage('Run Tests - JUnit/Mockito') {
             steps {
-                        sh 'mvn sonar:sonar -Dsonar.host.url=http://192.168.50.4:9100 -Dsonar.login=admin -Dsonar.password=Dorrazorgui2025@1'
-                    }
-                }
+                sh 'mvn test'
+            }
+        }
 
+        stage('Generate JaCoCo Report') {
+            steps {
+                echo 'Generating JaCoCo Report'
+                sh 'mvn jacoco:report'
+            }
+        }
 
+        stage('Publish JaCoCo Coverage Report') {
+            steps {
+                echo 'Publishing JaCoCo Coverage Report'
+                step([
+                    $class: 'JacocoPublisher',
+                    execPattern: '**/target/jacoco.exec',
+                    classPattern: '**/classes',
+                    sourcePattern: '**/src',
+                    exclusionPattern: '/target/**/,**/*Test,**/*_javassist/**'
+                ])
+            }
+        }
 
+        stage('SonarQube Analysis') {
+            steps {
+                sh 'mvn sonar:sonar -Dsonar.host.url=http://192.168.50.4:9100 -Dsonar.login=admin -Dsonar.password=Dorrazorgui2025@1'
+            }
+        }
 
         stage('Deploy to Nexus') {
-                    steps {
-                                echo 'Deploying to Nexus Repository'
-                                // Remplacez <nexus-ip> par l'adresse IP réelle de votre serveur Nexus
-                                sh 'mvn clean deploy -DskipTests'
-                    }
+            steps {
+                echo 'Deploying to Nexus Repository'
+                // Replace <nexus-ip> with the actual IP of your Nexus server
+                sh 'mvn clean deploy -DskipTests'
+            }
+        }
+
+        stage('Docker Compose Deployment') {
+            steps {
+                script {
+                    // Ensure docker-compose.yml is available in the repo
+                    sh 'docker compose down'
+                    sh 'docker compose up -d'
                 }
-     }
-
-
-
-      stage('docker compose') {
-                 steps {
-                      script {
-                                       // Assurez-vous que le fichier docker-compose.yml existe dans le repo
-                                       sh 'docker compose down'
-                                       sh 'docker compose up -d'
-                                }
-                      }
-             }
-
-    post {
-      success {
-        echo 'La pipeline s\'est terminée avec succès. Aucune action requise.'
-      }
-      failure {
-        echo 'La pipeline a échoué. Veuillez vérifier les logs de Jenkins pour plus de détails.'
-      }
+            }
+        }
     }
 
+    post {
+        success {
+            echo 'The pipeline completed successfully. No further action is required.'
+        }
+        failure {
+            echo 'The pipeline failed. Please check Jenkins logs for more details.'
+        }
+    }
 }
