@@ -22,10 +22,21 @@ services:
     volumes:
       - 'nexus-data:/nexus-data'
 
-
+  # Service Grafana
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    volumes:
+      - 'grafana-data:/var/lib/grafana'
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=07248745
 
 volumes:
   SonarQube_data:
   SonarQube_extensions:
   SonarQube_logs:
   nexus-data:
+  grafana-data:
+
