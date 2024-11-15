@@ -34,6 +34,15 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=07248745
+    # Service Prometheus
+  prometheus:
+      image: prom/prometheus:latest
+      ports:
+        - "9091:9090"
+      volumes:
+        - 'prometheus-data:/prometheus'
+      command:
+        - '--config.file=/etc/prometheus/prometheus.yml'
 
 volumes:
   SonarQube_data:
@@ -41,3 +50,4 @@ volumes:
   SonarQube_logs:
   nexus-data:
   grafana-data:
+  prometheus-data:
