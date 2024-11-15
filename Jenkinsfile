@@ -63,14 +63,15 @@ pipeline {
             }
         }
 
-          stage('Build Docker Image') {
-                    steps {
-                        script {
-                            // Construire l'image Docker à partir du Dockerfile
-                            docker.build("dorrazorgui/alpine:1.0.0")
-                        }
-                    }
-                }
+     stage('Build Docker Image') {
+         steps {
+             script {
+                 // Construire l'image Docker
+                 def image = docker.build("dorrazorgui/alpine:1.0.0")
+             }
+         }
+     }
+
 
                 // Stage 12: Push Docker image to DockerHub
                 stage('Push Docker Image to Dockerhub') {
