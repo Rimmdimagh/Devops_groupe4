@@ -73,17 +73,17 @@ pipeline {
      }
 
 
-                // Stage 12: Push Docker image to DockerHub
                 stage('Push Docker Image to Dockerhub') {
                     steps {
                         script {
-                            // Pousser l'image Docker vers Dockerhub
                             withDockerRegistry([credentialsId: 'dockerhub-credentials']) {
-                                docker.image('dorrazorgui/alpine:1.0.0').push()
+                                def image = docker.image('dorrazorgui/alpine:1.0.0')
+                                image.push()
                             }
                         }
                     }
                 }
+
 
 
           stage('Docker Compose') {
