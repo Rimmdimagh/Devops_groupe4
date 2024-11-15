@@ -85,9 +85,9 @@ pipeline {
 	    steps {
 		withcredentials([usernamepassword(credentialsid: 'docker-hub-credentials', usernamevariable: 'docker_username', passwordvariable: 'docker_password')]) {
 		    sh 'echo "$docker_password" | docker login -u "$docker_username" --password-stdin'
-		    sh 'docker push mehdibedoui/foyerspring:latest'
+		    sh 'docker push azizmkadem/kaddemback:latest'
 		}
-	    }
+
 	}
 
         stage('Docker Compose Down') {
@@ -105,6 +105,14 @@ pipeline {
                 }
 
         }
+        stage('restarting prometheus & grafana') {
+                                        steps {
+                                            echo 'Containers restarted :'
+                                            sh 'docker restart prometheus '
+                                            sh 'docker restart grafana '
+                                        }
+                                    }
+            }
 
 
     }
