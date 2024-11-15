@@ -76,7 +76,7 @@ pipeline {
                 stage('Push Docker Image to Dockerhub') {
                     steps {
                         script {
-                            withDockerRegistry([credentialsId: 'dockerhub-credentials']) {
+                            withDockerRegistry([credentialsId: 'docker']) {
                                 def image = docker.image('dorrazorgui/alpine:1.0.0')
                                 image.push()
                             }
