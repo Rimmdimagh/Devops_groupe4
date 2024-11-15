@@ -11,7 +11,7 @@ pipeline {
             }
         }
 
-        stage('List Files') {
+        stage('remove target directory') {
             steps {
                 script {
                     // Remove target directory (make sure this is the correct path)
@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-        stage('Package') {
+        stage('Package target ') {
             steps {
                 script {
                     // Run Maven clean and package
@@ -65,14 +65,7 @@ pipeline {
             }
         }
 
-        stage('Remove Old Docker Image') {
-            steps {
-                script {
-                    // Remove the old Docker image (force remove)
-                    sh 'docker rmi -f azizmkadem/kaddemback:latest || true'
-                }
-            }
-        }
+
 
         stage('Build Docker Image') {
             steps {
