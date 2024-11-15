@@ -65,7 +65,7 @@ pipeline {
 
           stage('Docker Compose') {
                     steps {
-                        dir('/vagrant/kaddem') {
+                        dir('/vagrant/project') {
 
 
                             // Étape 4 : Lancer Docker Compose
